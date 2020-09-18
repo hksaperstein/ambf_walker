@@ -1,12 +1,12 @@
-
 import rospy
 import numpy as np
 from std_msgs.msg import Float32MultiArray
 from Model import Model
-import PDController
+from . import PDController
+from sensor_msgs.msg import JointState
+from . import ControllerBase
 
-class DynController():
-
+class DynController(ControllerBase.BaseController):
 
     def __init__(self, model, kp, kd):
         """
@@ -15,9 +15,8 @@ class DynController():
         :param kp:
         :param kd:
         """
-        self._model = model
-        self.pdController = PDController.PDController(kp, kd)
-        self.pub = rospy.Publisher('tau',Float32MultiArray, queue_size=1)
+        super(DynController, self).__init__(model)
+        self.pdController = PDController.PDController(model, kp, kd)
 
     def set_gains(self, kp, kd):
         """
@@ -29,7 +28,7 @@ class DynController():
         self.pdController.kp = kp
         self.pdController.kd = kd
 
-    def calc_tau(self, q=None, qd=None, qdd=None ):
+    def calc_tau(self, q=None, qd=None, qdd=None, other=None):
         """
 
         :param q:
@@ -37,17 +36,13 @@ class DynController():
         :param qdd:
         :return:
         """
-        aq = np.zeros(7)
+        aq = np.zeros(len(q))
         if q is not None and qd is not None:
             e = q - self._model.q
             ed = qd - self._model.qd
-            aq = self.pdController.get_tau(e, ed)
-            if qdd is not None:
-                aq = qdd + aq
+            aq = self.pdController.calc_tau(e, ed)
+            aq += qdd
         tau = self._model.calculate_dynamics(aq)
-        msg = Float32MultiArray()
-        msg.data = tau.tolist()
-        self.pub.publish(msg)
-        self._model.update_torque(tau)
+        return tau
 
 
