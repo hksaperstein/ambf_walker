@@ -43,6 +43,7 @@ rate = rospy.Rate(1000)
 #           'RobRightThigh-RobRightShank', 'RobRightShank-RobRightFoot', 'Hip-Crutches']
 
 #joints = ['Hip-Leftthigh', 'Leftthigh-Leftshank', 'Leftshank-Leftfoot', 'Hip-Rightthigh', 'Rightthigh-Rightshank', 'Rightshank-Rightfoot', 'Hip-Cylinder']
+
 joints = ['Hip-RobLeftThigh', 'RobLeftThigh-RobLeftShank', 'RobLeftShank-RobLeftFoot',
           'Hip-RobRightThigh', 'RobRightThigh-RobRightShank', 'RobRightShank-RobRightFoot',  'Hip-Crutches']
 
@@ -50,14 +51,15 @@ LARRE = Exoskeleton.Exoskeleton(_client, joints, 56, 1.56)
 Dyn = DynController.DynController(LARRE, Kp, Kd)
 
 #mpc = MPController.MPController(LARRE, LARRE.get_runner())
-tempCnt = TempController.TempController(LARRE)
+
+
 # lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
 # controllers = {'Dyn': Dyn,
 #                "LQR":lqr}
 
 # lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
-controllers = {'Dyn': Dyn,
-               "Temp": tempCnt}
+controllers = {'Dyn': Dyn}
+
 cnrl = ControllerNode.ControllerNode(LARRE, controllers)
 
 machine = StateMachine.ExoStateMachine(LARRE)
