@@ -8,7 +8,7 @@ from Controller import ControllerNode
 from Model import Exoskeleton
 import rospy
 from ambf_client import Client
-from Controller import DynController, MPController, LQRController, TempController
+from Controller import DynController, TempController
 Kp = np.zeros((7, 7))
 Kd = np.zeros((7, 7))
 #
