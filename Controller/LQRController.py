@@ -21,7 +21,7 @@ class LQRController(ControllerBase.BaseController):
         :param kd:
         """
         super(LQRController, self).__init__(model)
-        self.runner =  TPGMMRunner.TPGMMRunner("/home/nathaniel/catkin_ws/src/ambf_walker/Train/gotozero.pickle")
+        self.runner =  TPGMMRunner.TPGMMRunner("/home/jack/catkin_ws/src/ambf_walker/Train/gotozero.pickle")
 
         self.x = []
         self.setup()

@@ -21,7 +21,7 @@ class MPCController(ControllerBase.BaseController):
         :param kd:
         """
         super(MPCController, self).__init__(model)
-        self.runner = TPGMMRunner.TPGMMRunner("/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/Train/gotozero.pickle")
+        self.runner = TPGMMRunner.TPGMMRunner("/home/jack/catkin_ws/src/ambf_walker/Train/gotozero.pickle")
         self.pub = rospy.Publisher("MPC_points", Float32MultiArray, queue_size=1,latch=True)
         self.x = []
         #self.setup()

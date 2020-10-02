@@ -369,7 +369,7 @@ class LQR(smach.State):
         self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
         self._model = model
         self.rate = rospy.Rate(100)
-        file = "/home/nathanielgoldfarb/linearize_model/test.npy"
+        file = "/home/jack/test.npy"
         with open(file, 'rb') as f:
             self.us2 = np.load(f)
         self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
@@ -377,7 +377,7 @@ class LQR(smach.State):
 
     def execute(self, userdata):
 
-        if self.count < 200:
+        if self.count < 199:
             q = np.array(7*[0.0])
             qd = np.array(7*[0.0])
             qdd = np.append(self.us2[self.count], [0.0])
@@ -395,7 +395,7 @@ class Temp(smach.State):
         smach.State.__init__(self, outcomes=outcomes)
         rospy.wait_for_service('joint_cmd')
         self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
-        self.runner = TPGMMRunner.TPGMMRunner("/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/Train/gotozero.pickle")
+        self.runner = TPGMMRunner.TPGMMRunner("/home/jack/catkin_ws/src/ambf_walker/Train/gotozero.pickle")
         self._model = model
         self.runner = model.get_runner()
         self.rate = rospy.Rate(1000)

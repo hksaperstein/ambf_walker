@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 import sys
+import os
 # from os import sys, path
 # sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import numpy as np
+dynamic_path = os.path.abspath(__file__+"/../../")
+print(dynamic_path)
+sys.path.append(dynamic_path)
 from StateMachines import StateMachine
 from Controller import ControllerNode
 from Model import Exoskeleton
 import rospy
 from ambf_client import Client
-from Controller import DynController, MPCController, TempController
+from Controller import DynController, MPCController, TempController,LQRController
 
 Kp = np.zeros((7, 7))
 Kd = np.zeros((7, 7))
@@ -51,19 +55,23 @@ joints = ['Hip-RobLeftThigh', 'RobLeftThigh-RobLeftShank', 'RobLeftShank-RobLeft
 LARRE = Exoskeleton.Exoskeleton(_client, joints, 56, 1.56)
 Dyn = DynController.DynController(LARRE, Kp, Kd)
 
-mpc = MPCController.MPCController(LARRE, LARRE.get_runner())
 
-
-# lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
-# controllers = {'Dyn': Dyn,
-#                "LQR":lqr}
-
-# lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
-
+lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
 temp = TempController.TempController(LARRE)
 controllers = {'Dyn': Dyn,
-                "MPC": mpc,
-               "Temp": temp}
+               "LQR":lqr,
+               "Temp":temp}
+
+# lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
+
+# mpc = MPCController.MPCController(LARRE, LARRE.get_runner())
+
+# temp = TempController.TempController(LARRE)
+# controllers = {'Dyn': Dyn,
+#                 "MPC": mpc,
+#                "Temp": temp}
+
+# lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
 
 cnrl = ControllerNode.ControllerNode(LARRE, controllers)
 
