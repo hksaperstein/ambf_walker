@@ -5,11 +5,10 @@ import sys
 import numpy as np
 from StateMachines import StateMachine
 from Controller import ControllerNode
-from Model import Exoskeleton
+from Model import Exoskeleton, Human
 import rospy
 from ambf_client import Client
 from Controller import DynController
-
 Kp = np.zeros((7, 7))
 Kd = np.zeros((7, 7))
 #
@@ -44,11 +43,13 @@ rate = rospy.Rate(1000)
 #           'RobRightThigh-RobRightShank', 'RobRightShank-RobRightFoot', 'Hip-Crutches']
 
 #joints = ['Hip-Leftthigh', 'Leftthigh-Leftshank', 'Leftshank-Leftfoot', 'Hip-Rightthigh', 'Rightthigh-Rightshank', 'Rightshank-Rightfoot', 'Hip-Cylinder']
-
-joints = ['Hip-RobLeftThigh', 'RobLeftThigh-RobLeftShank', 'RobLeftShank-RobLeftFoot',
+body_joints = ['Body-LeftThigh', 'LeftThigh-LeftShank', 'LeftShank-LeftFoot',
+               'Body-RightThigh', 'RightThigh-RightShank', 'RightShank-RightFoot']
+robot_joints = ['Hip-RobLeftThigh', 'RobLeftThigh-RobLeftShank', 'RobLeftShank-RobLeftFoot',
           'Hip-RobRightThigh', 'RobRightThigh-RobRightShank', 'RobRightShank-RobRightFoot',  'Hip-Crutches']
 
-LARRE = Exoskeleton.Exoskeleton(_client, joints, 56, 1.56)
+LARRE = Exoskeleton.Exoskeleton(_client, "exo", robot_joints, 56, 1.56)
+LARRY = Human.Human(_client, "human", body_joints, 0, 0)
 Dyn = DynController.DynController(LARRE, Kp, Kd)
 
 #mpc = MPController.MPController(LARRE, LARRE.get_runner())
@@ -62,5 +63,7 @@ Dyn = DynController.DynController(LARRE, Kp, Kd)
 controllers = {'Dyn': Dyn}
 
 cnrl = ControllerNode.ControllerNode(LARRE, controllers)
+LARRE.handle.set_rpy(0.25, 0, 0)
+LARRE.handle.set_pos(0, 0, 1.0)
 
-machine = StateMachine.ExoStateMachine(LARRE)
+# machine = StateMachine.ExoStateMachine(LARRE)

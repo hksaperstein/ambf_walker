@@ -5,7 +5,7 @@ This should be moved to a seperate repo later
 import abc
 import numpy as np
 import rbdl
-import Model
+from . import Model
 import time
 from GaitCore.Core import Point
 from std_msgs.msg import Float32MultiArray
@@ -14,11 +14,11 @@ from threading import Thread
 
 class Human(Model.Model):
 
-    def __init__(self, client, mass, height):
+    def __init__(self, client, model_name, joint_names, mass, height):
         # inits dynamic model and joints for leg
-        super(Human, self).__init__(client, mass, height)
+        super(Human, self).__init__(client, model_name=model_name, joint_names=joint_names)
 
-        self.handle = self._client.get_obj_handle('body')
+        self.handle = self._client.get_obj_handle('Hip')
 
         # num_of_segments should be initialized with the dynamical model, which is created in the constructor
         self.num_joints = len(self.handle.get_joint_names())

@@ -26,10 +26,18 @@ class Initialize(smach.State):
         dt = 0.01
         self.hip, self.knee, self.ankle = self._model.stance_trajectory(tf=tf, dt=dt)
         self.msg = DesiredJoints()
-        self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
+        self.pub = rospy.Publisher(self.model.model_name + "_set_points", DesiredJoints, queue_size=1)
 
         self.total = tf / dt
         self.count = 0
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
 
     def execute(self, userdata):
 
@@ -80,6 +88,7 @@ class Main(smach.State):
         self.msg = String
         self.Rate = rospy.Rate(100)
 
+
     def mode_cb(self, msg):
 
         if not self.have_msg:
@@ -105,8 +114,16 @@ class DMP(smach.State):
         self.runner = self._model.get_runner()
         self.rate = rospy.Rate(100)
         self.msg = DesiredJoints()
-        self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
+        self.pub = rospy.Publisher(self.model.model_name + "_set_points", DesiredJoints, queue_size=1)
         self.count = 0
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
 
     def execute(self, userdata):
 
@@ -156,6 +173,13 @@ class GoTo(smach.State):
         self.q = DesiredJoints()
         self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
 
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
 
     def traj_cb(self, msg):
         self.q = DesiredJoints()
@@ -189,11 +213,20 @@ class Listening(smach.State):
         smach.State.__init__(self, outcomes=outcomes, output_keys=['q'])
 
 
-        rospy.Subscriber("Traj", DesiredJoints, callback=self.traj_cb)
+        rospy.Subscriber(self.model.model_name + "_Traj", DesiredJoints, callback=self.traj_cb)
         self._model = model
         self.have_msg = False
         self.Rate = rospy.Rate(100)
         self.q = []
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
+
 
     def traj_cb(self, msg):
         self.q = []
@@ -299,8 +332,16 @@ class MPC(smach.State):
         self.runner = model.get_runner()
         self.rate = rospy.Rate(100)
         self.msg = DesiredJoints()
-        self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
+        self.pub = rospy.Publisher(self.model.model_name + "_set_points", DesiredJoints, queue_size=1)
         self.count = 0
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
 
     def execute(self, userdata):
 
@@ -336,8 +377,16 @@ class MPC2(smach.State):
         self.runner = model.get_runner()
         self.rate = rospy.Rate(100)
         self.msg = DesiredJoints()
-        self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
+        self.pub = rospy.Publisher(self.model.model_name + "_set_points", DesiredJoints, queue_size=1)
         self.count = 0
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
 
     def setup(self):
 
@@ -403,8 +452,16 @@ class LQR(smach.State):
         self.runner = model.get_runner()
         self.rate = rospy.Rate(100)
         self.msg = DesiredJoints()
-        self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
+        self.pub = rospy.Publisher(self.model.model_name + "_set_points", DesiredJoints, queue_size=1)
         self.count = 0
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
 
     def execute(self, userdata):
 
@@ -449,12 +506,20 @@ class Temp(smach.State):
         self.runner = model.get_runner()
         self.rate = rospy.Rate(100)
         self.msg = DesiredJoints()
-        self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
+        self.pub = rospy.Publisher(self.model.model_name + "_set_points", DesiredJoints, queue_size=1)
         file = "/home/nathanielgoldfarb/linearize_model/test.npy"
         with open(file, 'rb') as f:
             self.us = np.load(f)
 
         self.count = 0
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
 
     def execute(self, userdata):
 

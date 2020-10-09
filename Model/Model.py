@@ -13,8 +13,8 @@ from sensor_msgs.msg import JointState
 
 class Model(object):
 
-    def __init__(self, client, joint_names=[]):
-
+    def __init__(self, client, model_name, joint_names):
+        self._model_name = model_name
         self._client = client
         self._q = np.array([])
         self._qd = np.array([])
@@ -25,8 +25,16 @@ class Model(object):
         self._selected_joint_names = joint_names
         self._updater = Thread(target=self.update)
         self._enable_control = False
-        self.sub_torque = rospy.Subscriber("joint_torque", JointState, self.torque_cb)
-        self.q_pub = rospy.Publisher("q", Float32MultiArray, queue_size=1)
+        self.sub_torque = rospy.Subscriber(self.model_name + "_joint_torque", JointState, self.torque_cb)
+        self.q_pub = rospy.Publisher(self.model_name + "_q", Float32MultiArray, queue_size=1)
+
+    @property
+    def model_name(self):
+        return self._model_name
+
+    @model_name.setter
+    def model_name(self, value):
+        self._model_name = value
 
     def torque_cb(self, tau):
         self.update_torque(list(tau.effort))
@@ -134,6 +142,7 @@ class Model(object):
     def calculate_dynamics(self, qdd):
         pass
 
+    
 
 # def runge_integrator(model, t, y, h, tau):
 #
@@ -255,3 +264,4 @@ def finite_differences(model, y, u, h=0.01):
         B[:, ii] = (state_inc - state_dec) / (2 * eps)
 
     return A, B
+

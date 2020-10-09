@@ -16,13 +16,10 @@ class ExoStateMachine(object):
                                     transitions={'Initializing': 'Initialize',
                                                   'Initialized': 'Main'})
 
-            smach.StateMachine.add('Main', Main(model, ["Poly", "DMP", "Lower", "MPC", "LQR", "Temp"]),
+            smach.StateMachine.add('Main', Main(model, ["Poly", "DMP", "Lower"]),
                                    transitions={'Poly': 'Listening',
                                                 'DMP': 'DMP',
-                                                'Lower':'LowerBody',
-                                                'MPC':'MPC',
-                                                "LQR":"LQR",
-                                                "Temp":"Temp"})
+                                                'Lower':'LowerBody',})
 
             smach.StateMachine.add('LowerBody', LowerBody(model),
                                    transitions={'Lowering': 'LowerBody',
@@ -32,17 +29,6 @@ class ExoStateMachine(object):
                                    transitions={'stepping': 'DMP',
                                                 'stepped': 'Main'},
                                    remapping={'q': 'q'})
-
-            smach.StateMachine.add('MPC', MPC(model),
-                                   transitions={'MPCing': 'MPC',
-                                                'MPCed': 'Main'},
-                                   remapping={'q': 'q'})
-
-            smach.StateMachine.add('LQR', LQR(model),
-                                   transitions={'LQRing': 'LQR',
-                                                'LQRed': 'Main'},
-                                   remapping={'q': 'q'})
-
             smach.StateMachine.add('Listening', Listening(model),
                                    transitions={'Waiting': 'Listening',
                                                 'Sending': 'Follow'},
@@ -51,11 +37,6 @@ class ExoStateMachine(object):
             smach.StateMachine.add('Follow', Follow(model),
                                    transitions={'Following': 'Follow',
                                                 'Followed': 'Main'},
-                                   remapping={'q': 'q'})
-
-            smach.StateMachine.add('Temp', Temp(model),
-                                   transitions={'Temping': 'Temp',
-                                                'Temped': 'Main'},
                                    remapping={'q': 'q'})
 
         outcome = sm.execute()

@@ -22,8 +22,8 @@ from GaitAnaylsisToolkit.LearningTools.Runner import TPGMMRunner
 
 class Exoskeleton(Model.Model):
 
-    def __init__(self, client, joints, mass, height):
-        super(Exoskeleton, self).__init__(client, joint_names=joints)
+    def __init__(self, client, model_name, joint_names, mass, height):
+        super(Exoskeleton, self).__init__(client, model_name=model_name, joint_names=joint_names)
         self._handle = self._client.get_obj_handle('Hip')
         # Update to current
 
@@ -301,7 +301,7 @@ class Exoskeleton(Model.Model):
     def linearize(self):
         pass
 
-    def state(self, q, qd ):
+    def state(self, q, qd):
         self.get_left_leg.hip.angle.z = q[0]
         self.get_left_leg.knee.angle.z = q[1]
         self.get_left_leg.ankle.angle.z = q[2]
