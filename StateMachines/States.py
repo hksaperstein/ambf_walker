@@ -26,7 +26,7 @@ class Initialize(smach.State):
         dt = 0.01
         self.hip, self.knee, self.ankle = self._model.stance_trajectory(tf=tf, dt=dt)
         self.msg = DesiredJoints()
-        self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
+        self.pub = rospy.Publisher(self._model.model_name + "_set_points", DesiredJoints, queue_size=1)
 
         self.total = tf / dt
         self.count = 0

@@ -22,15 +22,15 @@ from GaitAnaylsisToolkit.LearningTools.Runner import TPGMMRunner
 
 class Exoskeleton(Model.Model):
 
-    def __init__(self, client, joints, mass, height):
-        super(Exoskeleton, self).__init__(client, joint_names=joints)
+    def __init__(self, client, model_name, joints, mass, height):
+        super(Exoskeleton, self).__init__(client, model_name=model_name, joint_names=joints)
         self._handle = self._client.get_obj_handle('Hip')
         # Update to current
 
         time.sleep(4)
         self._mass = mass
         self._height = height
-        self._model = self.dynamic_model()
+        self.rbdl_model = self.dynamic_model()
         left_joints = {}
         right_joints = {}
 
@@ -331,3 +331,6 @@ class Exoskeleton(Model.Model):
         left_foot_sensors = [self._left_foot_sensor1, self._left_foot_sensor2, self._left_foot_sensor3]
         right_foot_sensors = [self._right_foot_sensor1, self._right_foot_sensor2, self._right_foot_sensor3]
         return left_foot_sensors, right_foot_sensors
+
+    def calculate_torque(self, forces):
+        pass
