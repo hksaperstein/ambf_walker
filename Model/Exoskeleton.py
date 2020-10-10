@@ -353,6 +353,6 @@ class Exoskeleton(Model.Model):
         q2 = np.arctan2(-np.sqrt(1 - (num / dem)**2), (num / dem))
         q2 = np.nan_to_num(q2)
         q1 = -(np.nan_to_num(np.arctan2(y, x) - np.arctan2(l2*np.sin(q2), l1 + l2*np.cos(q2))) + 0.5*np.pi)
-        q3 = np.nan_to_num(2*np.pi - q1 - q2) - 2*np.pi
+        q3 = -(np.nan_to_num(2*np.pi - q1 - q2) - 2*np.pi) + 0.75*np.pi
 
-        return [q1, -q2, -q3+0.75*np.pi]
+        return [q1, -q2, q3]

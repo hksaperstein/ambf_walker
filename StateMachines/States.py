@@ -555,7 +555,9 @@ class StairDMP(smach.State):
 
             pathZ = self.runnerZ.run()
             pathY = self.runnerY.run()
-
+            self.hip_angles.append(0.0)
+            self.knee_angles.append(0.0)
+            self.ankle_angles.append(0.0)
             for y, x in zip(pathZ, pathY):
                 joint_angle = self._model.leg_inverse_kinimatics([y, x], hip_location=[-483.4, 960.67])
                 self.hip_angles.append(joint_angle[0][0])
@@ -577,6 +579,7 @@ class StairDMP(smach.State):
             V_knee = 0.001
             V_ankle = 0.001
             alpha = 5.0
+
             for t in range(tf):
 
                 if  0 <= t and  t <= int(tf/alpha):
