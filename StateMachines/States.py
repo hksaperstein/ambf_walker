@@ -377,7 +377,7 @@ class LQR(smach.State):
 
     def execute(self, userdata):
 
-        if self.count < 199:
+        if self.count < 177:
             q = np.array(7*[0.0])
             qd = np.array(7*[0.0])
             qdd = np.append(self.us2[self.count], [0.0])
