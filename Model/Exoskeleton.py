@@ -172,6 +172,8 @@ class Exoskeleton(Model.Model):
         parent_dist["right_shank"] = np.array([0.033, -0.03,  -0.436])
         parent_dist["right_foot"] = np.array([0.02, -0.027,  -0.39])
 
+
+
         inertia["hip"] = np.diag([ 0.0,0.0,0.0])
 
         inertia["left_thigh"] = np.diag([0.0, 0.0, 0.07])
@@ -293,7 +295,7 @@ class Exoskeleton(Model.Model):
     def stance_trajectory(self, tf=2, dt=0.01):
         hip = Model.get_traj(0.0, -0.2, 0.0, 0.0, tf, dt)
         knee = Model.get_traj(0.0, 0.20, 0.0, 0., tf, dt)
-        ankle = Model.get_traj(-0.349, -0.1, 0.0, 0.0, tf, dt)
+        ankle = Model.get_traj(-0.349, -0.2, 0.0, 0.0, tf, dt)
         return hip, knee, ankle
 
     def get_runner(self):
@@ -339,10 +341,10 @@ class Exoskeleton(Model.Model):
 
     def leg_inverse_kinimatics(self, toe, hip_location):
 
-        l1 = 416.5
-        l2 = 477.87
-        l3 = 66.3
-        l4 = 258.4
+        l1 = 436.0
+        l2 = 390.0
+        l3 = 98.0
+        l4 = 217.0
 
         x = toe[0] - hip_location[0] - abs(l4)
         y = toe[1] - hip_location[1] + abs(l3)

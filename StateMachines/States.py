@@ -40,7 +40,7 @@ class Initialize(smach.State):
     def execute(self, userdata):
 
         self._model.handle.set_rpy(0.25, 0, 0)
-        self._model.handle.set_pos(0, 0, 1.0)
+        self._model.handle.set_pos(0.0, 0, 1.0)
 
         if self.count <= self.total - 1:
 
@@ -334,12 +334,12 @@ class LowerBody(smach.State):
         current = self._model.handle.get_pos().z
 
         if current > self.final_height:
-            self._model.handle.set_pos(0.0,0.0, current-self.step)
+            self._model.handle.set_pos(1.0, 0.9, current-self.step)
             self._model.handle.set_rpy(0.25, 0, 0)
             return 'Lowering'
         else:
-            self._model.handle.set_rpy(0.25, 0, 0)
-            self._model.handle.set_force(0.0, 0.0, 0.0)
+            #self._model.handle.set_rpy(0.25, 0, 0)
+            #self._model.handle.set_force(0.0, 0.0, 0.0)
             return "Lowered"
 
 
@@ -433,6 +433,7 @@ class LQR(smach.State):
             qd = np.array(7*[0.0])
             qdd = np.append(self.us2[self.count], [0.0])
             self.send(q, qd, qdd, "Temp", [self.count])
+            self.pub.publish(q)
             self.rate.sleep()
             self.count += 1
             return "LQRing"
@@ -557,12 +558,12 @@ class StairDMP(smach.State):
             pathY = self.runnerY.run()
             self.hip_angles.append(0.0)
             self.knee_angles.append(0.0)
-            self.ankle_angles.append(0.0)
-            for y, x in zip(pathZ, pathY):
-                joint_angle = self._model.leg_inverse_kinimatics([y, x], hip_location=[-483.4, 960.67])
+            self.ankle_angles.append(-0.2)
+            for y, x in zip(pathZ, pathY):#-483.4
+                joint_angle = self._model.leg_inverse_kinimatics([y, x], hip_location=[-483.0, 960.67])
                 self.hip_angles.append(joint_angle[0][0])
                 self.knee_angles.append(joint_angle[1][0])
-                self.ankle_angles.append(joint_angle[2][0])
+                self.ankle_angles.append(-0.2)
 
             t = np.linspace(0, 100, len(self.knee_angles))
 
@@ -623,7 +624,7 @@ class StairDMP(smach.State):
 
             q = np.array([self.init_joint_angles[0],
                           self.init_joint_angles[1],
-                          self.init_joint_angles[2],
+                          -0.2,
                           self.hip_angles[self.count],
                           self.knee_angles[self.count],
                           self.ankle_angles[self.count],
