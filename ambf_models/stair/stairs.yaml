@@ -3,6 +3,7 @@
 # Link: https://github.com/WPI-AIM/ambf_addon
 # Generated on: 2020-10-11 19:32:39
 bodies: [BODY stairs]
+sensors: [SENSOR Prox]
 joints: []
 high resolution path: ./high_res/
 low resolution path: ./low_res/
@@ -32,3 +33,29 @@ BODY stairs:
     diffuse: {b: 0.0056, g: 0.8, r: 0.0}
     specular: {b: 1.0, g: 1.0, r: 1.0}
     transparency: 1.0
+
+
+SENSOR Prox:
+  name: Prox
+  type: Proximity
+  location:
+    orientation: {p: 0.0, r: 0.0, y: 0.0}
+    position: {x: 0.0, y: 0.0, z: 0.00}
+  array:
+
+    - offset: {x: 0.0, y: 0.4, z: 0.0}
+      direction: {x: -1.0, y: 0.0, z: -1.0}
+
+    - offset: {x: -0.0, y: 0.4, z: 0.0}
+      direction: {x: 1.0, y: 0.0, z: 1.0}
+
+    - offset: {x: 0.0, y: 0.4, z: -0.0}
+      direction: {x: 1.0, y: 0.0, z: -1.0}
+
+    - offset: {x: 0.0, y: 0.4, z: 0.0}
+      direction: {x: -1.0, y: 0.0, z: 1.0}
+    
+
+  range: 0.5
+  parent: /ambf/env/BODY stair
+  visible: True
