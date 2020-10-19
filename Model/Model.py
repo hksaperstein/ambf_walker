@@ -153,7 +153,7 @@ self.rbdl_model = self.dynamic_model()
         pass
 
     @abc.abstractmethod
-    def calculate_torque(self, model):
+    def calculate_torque(self):
         pass
 # def runge_integrator(model, t, y, h, tau):
 #

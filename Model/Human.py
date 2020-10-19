@@ -70,13 +70,81 @@ class Human(Model.Model):
         bodies["left"] = {}
         segments = ["thigh", "shank", "foot"]
 
-        mass["hip"] = 2.37
+        mass["hip"] = 5
         mass["right_thigh"] = 2.11
         mass["left_thigh"] = 2.11
         mass["right_shank"] = 1.28
         mass["left_shank"] = 1.28
-        mass["right_foot"] = 0.86
-        mass["left_foot"] = 0.86
+        mass["right_foot"] = 0.866
+        mass["left_foot"] = 0.866
+
+        parent_dist = {}
+        parent_dist["hip"] = np.array([0.0, 0.0, 0.0])
+
+        parent_dist["left_thigh"] = np.array([0.0061, -0.0263, -.6277])
+        parent_dist["left_shank"] = np.array([0.1445, 0.0231, -0.4364])
+        parent_dist["left_foot"] = np.array([0.0, 0.0268, -0.3881])
+
+        parent_dist["right_thigh"] = np.array([-0.0061, -0.0263, -0.6277])
+        parent_dist["right_shank"] = np.array([-0.1445, 0.0231, -0.4364])
+        parent_dist["right_foot"] = np.array([-0.0, 0.0268, -0.3881])
+
+        inertia["hip"] = np.diag([ 0.0,0.0,0.0])
+
+        inertia["left_thigh"] = np.diag([0.0, 0.0, 0.07])
+        inertia["left_shank"] = np.diag([0.0, 0.0, 0.05])
+        inertia["left_foot"] = np.diag([0.0, 0.0, 0.0])
+
+        inertia["right_thigh"] = np.diag([0.0, 0.00, 0.07])
+        inertia["right_shank"] = np.diag([0.0, 0.0, 0.05])
+        inertia["right_foot"] = np.diag([0.0, 0.0, 0.0])
+
+        com["hip"] = np.array([0.00, -0.02, 0.18])
+        com["left_thigh"] = np.array([0.02, 0.01,  -0.09])
+        com["left_shank"] = np.array([-0.02, -0.007, 0.06])
+        com["left_foot"] = np.array([0.08, -0.06, 0.04])
+
+        com["right_thigh"] = np.array([-0.02, 0.01, -0.09])
+        com["right_shank"] = np.array([0.02, -0.007, 0.06])
+        com["right_foot"] = np.array([0.08, -0.06, 0.04])
+
+        com["left_thigh"] = np.array([.1009, 0.0088, -0.1974])  # needs to be fixed in blender
+        com["left_shank"] = np.array([-0.0305, 0.0174, -0.2118])
+        com["left_foot"] = np.array([-0.0052, -0.0017, -0.0235])
+
+        com["right_thigh"] = np.array([-.1009, 0.0088, -0.1974])  # needs to be fixed in blender
+        com["right_shank"] = np.array([0.0305, 0.0174, -0.2118])
+        com["right_foot"] = np.array([0.0052, -0.0017, -0.0235])
+
+        hip_body = rbdl.Body.fromMassComInertia(mass["hip"], com["hip"], inertia["hip"])
+        for segs in segments:
+            bodies["right_" + segs] = rbdl.Body.fromMassComInertia(mass["right_" + segs], com["right_" + segs], inertia["right_" + segs])
+            bodies["left_" + segs] = rbdl.Body.fromMassComInertia(mass["left_" + segs], com["left_" + segs], inertia["left_" + segs])
+
+        xtrans = rbdl.SpatialTransform()
+        xtrans.r = np.array([0.0, 0.0, 0.0])
+        xtrans.E = np.eye(3)
+
+        self.hip = model.AddBody(0, xtrans, rbdl.Joint.fromJointType("JointTypeFixed"), hip_body, "hip")
+        joint_rot_z = rbdl.Joint.fromJointType("JointTypeRevoluteX")
+
+        xtrans.r = parent_dist["left_thigh"]
+        self.left_thigh = model.AddBody(self.hip, xtrans, joint_rot_z, bodies["left_thigh"], "left_thigh")
+        xtrans.E = np.eye(3)
+        xtrans.r = parent_dist["left_shank"]
+        self.left_shank = model.AddBody(self.left_thigh, xtrans, joint_rot_z, bodies["left_shank"], "left_shank")
+        xtrans.r = parent_dist["left_foot"]
+        self.left_foot = model.AddBody(self.left_shank, xtrans, joint_rot_z, bodies["left_foot"], "left_foot")
+
+        xtrans.r = parent_dist["right_thigh"]
+        self.right_thigh = model.AddBody(self.hip, xtrans, joint_rot_z, bodies["right_thigh"], "right_thigh")
+        xtrans.E = np.eye(3)
+        xtrans.r = parent_dist["right_shank"]
+        self.right_shank = model.AddBody(self.right_thigh, xtrans, joint_rot_z, bodies["right_shank"], "right_shank")
+        xtrans.r = parent_dist["right_foot"]
+        self.right_foot = model.AddBody(self.right_shank, xtrans, joint_rot_z, bodies["right_foot"], "right_foot")
+
+        model.gravity = np.array([0, 0, -9.81])
 
         return model
 
@@ -86,10 +154,28 @@ class Human(Model.Model):
     def update_state(self, q, qd):
         pass
 
-    def calculate_torque(self, model):
-        left_leg, right_leg = model.get_leg_sensors()
-        print(left_leg[0].x, right_leg[0])
-        G = np.array([], (3, 3))
-        jacobian = rbdl.CalcPointJacobian(self.rbdl_model, self.q, 0, 10, G)
-        # jacobiang = G
-        # print(jacobian, jacobiang)
+    def calculate_torque(self):
+        pass
+        # left_leg_force, right_leg_force = model.get_leg_sensors()
+        #
+        # front_left_thigh_tab_force = [left_leg_force[0].x, left_leg_force[0].y, left_leg_force[0].z]
+        # front_left_shank_tab_force = [left_leg_force[1].x, left_leg_force[1].y, left_leg_force[1].z]
+        # front_right_thigh_tab_force = [right_leg_force[0].x, right_leg_force[0].y, right_leg_force[0].z]
+        # front_right_shank_tab_force = [right_leg_force[1].x, right_leg_force[1].y, right_leg_force[1].z]
+        # forces = [front_left_thigh_tab_force, front_left_shank_tab_force, front_right_thigh_tab_force, front_right_shank_tab_force]
+        #
+        # # Sensor point locations
+        # # add back sensor logic
+        # front_left_thigh_tab_location = np.array([0.1229, -0.2401, -0.1364])
+        # front_right_thigh_tab_location = np.array([-0.1229, -0.2401, -0.1364])
+        # front_left_shank_tab_location = np.array([0.1229, -0.184, -0.5801])
+        # front_right_shank_tab_location = np.array([-0.1236, -0.184, -0.5801])
+        # locations = [front_left_thigh_tab_location, front_left_shank_tab_location, front_right_thigh_tab_location, front_right_shank_tab_location]
+        #
+        # J = np.zeros((3, 6))
+        #
+        # # need proper body_ids
+        # rbdl.CalcPointJacobian(self.rbdl_model, self.q, 1, front_left_thigh_tab_location, J)
+        # J_t = np.transpose(J)
+        # print(J_t)
+        # print(J_t*forces[0])

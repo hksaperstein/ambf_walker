@@ -45,9 +45,8 @@ body_joints = ['Body-LeftThigh', 'LeftThigh-LeftShank', 'LeftShank-LeftFoot',
                'Body-RightThigh', 'RightThigh-RightShank', 'RightShank-RightFoot']
 robot_joints = ['Hip-RobLeftThigh', 'RobLeftThigh-RobLeftShank', 'RobLeftShank-RobLeftFoot',
           'Hip-RobRightThigh', 'RobRightThigh-RobRightShank', 'RobRightShank-RobRightFoot',  'Hip-Crutches']
-
-LARRE = Exoskeleton.Exoskeleton(_client, "exo", robot_joints, 56, 1.56)
-# LARRY = Human.Human(_client, "human", body_joints, 0, 0)
+LARRY = Human.Human(_client, "human", body_joints, 0, 0)
+LARRE = Exoskeleton.Exoskeleton(_client, "exo", robot_joints, 56, 1.56, LARRY)
 Dyn = DynController.DynController(LARRE, Kp, Kd)
 
 #mpc = MPController.MPController(LARRE, LARRE.get_runner())
@@ -65,7 +64,9 @@ cnrl = ControllerNode.ControllerNode(LARRE, controllers)
 LARRE.handle.set_rpy(0.25, 0, 0)
 LARRE.handle.set_pos(0, 0, 1.0)
 
-
 # while True:
-#     LARRY.calculate_torque(LARRE)
+#     fk = LARRE.fk()
+#     print(fk["right_hip"])
+while True:
+    LARRE.calculate_torque()
 # machine = StateMachine.ExoStateMachine(LARRE)
