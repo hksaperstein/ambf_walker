@@ -3,7 +3,7 @@ import numpy as np
 
 raduis = 1
 
-theta = np.linspace(-np.pi, -0.5*np.pi, 40)
+theta = np.linspace(-np.pi, -0.70*np.pi, 75)
 
 for angle in theta:
     x = np.round(raduis * np.cos(angle),3)
