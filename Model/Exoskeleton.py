@@ -16,13 +16,19 @@ from threading import Thread
 from . import Model
 from GaitCore.Bio import Leg, Joint
 import rospy
-from ambf_msgs.msg import RigidBodyState
+from ambf_msgs.msg import RigidBodyState, SensorState
 from GaitAnaylsisToolkit.LearningTools.Runner import TPGMMRunner
+from geometry_msgs.msg import Point32
+from sensor_msgs.msg import PointCloud
 
 
 class Exoskeleton(Model.Model):
 
     def __init__(self, client, joints, mass, height):
+        self.prox = {}
+        self.prox["LeftSideProx"] = rospy.Publisher('left_leg', PointCloud, queue_size=10)
+        self.prox["RightSideProx"] = rospy.Publisher('right_leg', PointCloud, queue_size=10)
+
         super(Exoskeleton, self).__init__(client, joint_names=joints)
         self._handle = self._client.get_obj_handle('Hip')
         # Update to current
@@ -56,6 +62,12 @@ class Exoskeleton(Model.Model):
         # self._right_thigh_sensorB = Point.Point(0, 0, 0)
         # self._right_shank_sensorF = Point.Point(0, 0, 0)
         # self._right_shank_sensorB = Point.Point(0, 0, 0)
+        rospy.Subscriber("/ambf/env/LeftSideProx/State", SensorState, self.prox_callback)
+        rospy.Subscriber("/ambf/env/RightSideProx/State", SensorState, self.prox_callback)
+
+        rospy.Subscriber("/ambf/env/LeftFootProx/State", SensorState, self.left_foot_prox_callback)
+        rospy.Subscriber("/ambf/env/RightFootProx/State", SensorState, self.right_foot_prox_callback)
+
         self._left_thigh_sensorF_sub = message_filters.Subscriber("/ambf/env/FrontSensorLeftThigh/State", RigidBodyState)
         self._left_thigh_sensorB_sub = message_filters.Subscriber("/ambf/env/BackSensorLeftThigh/State", RigidBodyState)
         self._left_shank_sensorF_sub = message_filters.Subscriber("/ambf/env/FrontSensorLeftShank/State", RigidBodyState)
@@ -71,12 +83,17 @@ class Exoskeleton(Model.Model):
         self._leg_sensor_cb = message_filters.TimeSynchronizer(self._leg_sensor_ls, 1)
         self._leg_sensor_cb.registerCallback(self.leg_sensor_callback)
 
-        self._left_foot_sensor1 = Point.Point(0, 0, 0)
-        self._left_foot_sensor2 = Point.Point(0, 0, 0)
-        self._left_foot_sensor3 = Point.Point(0, 0, 0)
-        self._right_foot_sensor1 = Point.Point(0, 0, 0)
-        self._right_foot_sensor2 = Point.Point(0, 0, 0)
-        self._right_foot_sensor3 = Point.Point(0, 0, 0)
+        self._left_foot_force_sensor = []
+        self._right_foot_force_sensor = []
+
+        self._left_foot_force_sensor.append(Point.Point(0, 0, 0))
+        self._left_foot_force_sensor.append(Point.Point(0, 0, 0))
+        self._left_foot_force_sensor.append(Point.Point(0, 0, 0))
+
+        self._right_foot_force_sensor.append(Point.Point(0, 0, 0))
+        self._right_foot_force_sensor.append(Point.Point(0, 0, 0))
+        self._right_foot_force_sensor.append(Point.Point(0, 0, 0))
+
         self._left_foot_sensor1_sub = message_filters.Subscriber("/ambf/env/SensorLeftFoot1Tab/State", RigidBodyState)
         self._left_foot_sensor2_sub = message_filters.Subscriber("/ambf/env/SensorLeftFoot2Tab/State", RigidBodyState)
         self._left_foot_sensor3_sub = message_filters.Subscriber("/ambf/env/SensorLeftFoot3Tab/State", RigidBodyState)
@@ -87,9 +104,56 @@ class Exoskeleton(Model.Model):
                                 self._right_foot_sensor1_sub, self._right_foot_sensor2_sub, self._right_foot_sensor3_sub]
         self._foot_sensor_cb = message_filters.TimeSynchronizer(self._foot_sensor_ls, 1)
         self._foot_sensor_cb.registerCallback(self.foot_sensor_callback)
-        # END ATTEMPT
-
+        self._right_foot_prox = SensorState()
+        self._left_foot_prox = SensorState()
         self._updater.start()
+
+    def left_foot_prox_callback(self, msg):
+        self._left_foot_prox = msg
+
+    def right_foot_prox_callback(self, msg):
+        self._right_foot_prox = msg
+
+    def check_foot_collision(self):
+        return any(self._left_foot_prox.triggered)
+
+    def check_foot_collision(self):
+        return any(self._left_foot_prox.triggered)
+
+    def get_right_foot_collision_distance(self):
+        dist = self._left_foot_prox.measurement
+        raduis = self._left_foot_prox.range[0]
+        return dist[0] - raduis
+
+    def get_left_foot_collision_distance(self):
+        dist = self._right_foot_prox.measurement
+        raduis = self._right_foot_prox.range[0]
+        return dist[0] - raduis
+
+    def prox_callback(self, msg):
+
+        pos = msg.pose
+        name = msg.name.data
+        ranges = msg.measurement
+        raduis = msg.range[0]
+        parent_name = msg.parent_name
+        sensed_objects = msg.sensed_objects
+        theta = np.linspace(-np.pi, -0.70 * np.pi, 75)
+        cloud = PointCloud()
+        for rad, angle, obj in zip(ranges, theta, sensed_objects):
+            point = Point32()
+            if "Rob" in obj.data:
+                r = 0
+            else:
+                r = rad
+            point.y = (raduis - r) * np.cos(angle) + pos.position.y
+            point.z = (raduis - r) * np.sin(angle) + pos.position.z
+            point.x = pos.position.x
+            cloud.points.append(point)
+
+        cloud.header.stamp = rospy.Time.now()
+        cloud.header.frame_id = "/exoskeleton"
+        self.prox[name].publish(cloud)
 
     def leg_sensor_callback(self, flt, blt, fls, bls, frt, brt, frs, brs):
         force_flt = Point.Point(flt.wrench.force.x, flt.wrench.force.y, flt.wrench.force.z)
@@ -123,12 +187,8 @@ class Exoskeleton(Model.Model):
         force_rf2 = Point.Point(rf2.wrench.force.x, rf2.wrench.force.y, rf2.wrench.force.z)
         force_rf3 = Point.Point(rf3.wrench.force.x, rf3.wrench.force.y, rf3.wrench.force.z)
 
-        self._left_foot_sensor1 = force_lf1
-        self._left_foot_sensor2 = force_lf2
-        self._left_foot_sensor3 = force_lf3
-        self._right_foot_sensor1 = force_rf1
-        self._right_foot_sensor2 = force_rf2
-        self._right_foot_sensor3 = force_rf3
+        self.left_foot_force_sensor = [force_lf1, force_lf2, force_lf3]
+        self.right_foot_force_sensor = [force_rf1, force_rf2, force_rf3]
 
     def calculate_dynamics(self, qdd):
         tau = np.asarray([0.0] * self._joint_num)
@@ -170,6 +230,8 @@ class Exoskeleton(Model.Model):
         parent_dist["right_thigh"] = np.array([-0.237, -0.124,  -0.144])
         parent_dist["right_shank"] = np.array([0.033, -0.03,  -0.436])
         parent_dist["right_foot"] = np.array([0.02, -0.027,  -0.39])
+
+
 
         inertia["hip"] = np.diag([ 0.0,0.0,0.0])
 
@@ -292,11 +354,14 @@ class Exoskeleton(Model.Model):
     def stance_trajectory(self, tf=2, dt=0.01):
         hip = Model.get_traj(0.0, -0.2, 0.0, 0.0, tf, dt)
         knee = Model.get_traj(0.0, 0.20, 0.0, 0., tf, dt)
-        ankle = Model.get_traj(-0.349, -0.1, 0.0, 0.0, tf, dt)
+        ankle = Model.get_traj(-0.349, -0.2, 0.0, 0.0, tf, dt)
         return hip, knee, ankle
 
     def get_runner(self):
         return TPGMMRunner.TPGMMRunner("/home/jack/catkin_ws/src/ambf_walker/config/gotozero.pickle")
+
+    def get_walker(self):
+        return TPGMMRunner.TPGMMRunner("/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/config/walk.pickle")
 
     def linearize(self):
         pass
@@ -322,12 +387,50 @@ class Exoskeleton(Model.Model):
         """
         return self._left_leg
 
-    def get_leg_sensors(self):
-        left_leg_sensors = [self._left_leg.hip.force, self._left_leg.knee.force]
-        right_leg_sensors = [self._right_leg.hip.force, self._right_leg.knee.force]
-        return left_leg_sensors, right_leg_sensors
 
-    def get_foot_sensors(self):
-        left_foot_sensors = [self._left_foot_sensor1, self._left_foot_sensor2, self._left_foot_sensor3]
-        right_foot_sensors = [self._right_foot_sensor1, self._right_foot_sensor2, self._right_foot_sensor3]
-        return left_foot_sensors, right_foot_sensors
+    # def get_leg_sensors(self):
+    #     left_leg_sensors = [self._left_leg.hip.force, self._left_leg.knee.force]
+    #     right_leg_sensors = [self._right_leg.hip.force, self._right_leg.knee.force]
+    #     return left_leg_sensors, right_leg_sensors
+
+    @property
+    def left_foot_force_sensor(self):
+        return self._left_foot_force_sensor
+
+    @property
+    def right_foot_force_sensor(self):
+        return self._right_foot_force_sensor
+
+    @left_foot_force_sensor.setter
+    def left_foot_force_sensor(self, value):
+        self._left_foot_force_sensor = value
+
+    @right_foot_force_sensor.setter
+    def right_foot_force_sensor(self, value):
+        self._right_foot_force_sensor = value
+
+    # def get_foot_sensors(self):
+    #     left_foot_sensors = [self._left_foot_sensor1, self._left_foot_sensor2, self._left_foot_sensor3]
+    #     right_foot_sensors = [self._right_foot_sensor1, self._right_foot_sensor2, self._right_foot_sensor3]
+    #     return left_foot_sensors, right_foot_sensors
+
+
+    def leg_inverse_kinimatics(self, toe, hip_location):
+
+        l1 = 436.0
+        l2 = 390.0
+        l3 = 98.0
+        l4 = 217.0
+
+        x = toe[0] - hip_location[0] - abs(l4)
+        y = toe[1] - hip_location[1] + abs(l3)
+
+        num = x*x + y*y - l1**2 - l2**2
+        dem = 2*l1*l2
+
+        q2 = np.arctan2(-np.sqrt(1 - (num / dem)**2), (num / dem))
+        q2 = np.nan_to_num(q2)
+        q1 = -(np.nan_to_num(np.arctan2(y, x) - np.arctan2(l2*np.sin(q2), l1 + l2*np.cos(q2))) + 0.5*np.pi)
+        q3 = -(np.nan_to_num(2*np.pi - q1 - q2) - 2*np.pi) + 0.75*np.pi
+
+        return [q1, -q2, q3]
