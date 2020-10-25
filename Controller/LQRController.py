@@ -65,7 +65,13 @@ class LQRController(ControllerBase.BaseController):
         x0 = x_path[0]
         x_path = np.array(x_path)
         u_path = np.array(u_path)
-        R = 0.1 * np.eye(dynamics.action_size)
+
+        #####change################################!!!!!
+        R = 5.0e-4 * np.eye(dynamics.action_size)
+        R[3,3] = 3.0e-3
+        R[4,4] = 3.0e-3
+        R[5,5] = 3.0e-3
+        #R = 0.1 * np.eye(dynamics.action_size)
         #
         cost2 = PathQsRCost(Q, R, x_path=x_path, u_path=u_path)
         #
