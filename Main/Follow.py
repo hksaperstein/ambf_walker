@@ -68,6 +68,6 @@ cnrl = ControllerNode.ControllerNode(LARRE, controllers)
 # while True:
 #     fk = LARRE.fk()
 #     print(fk["right_hip"])
-while True:
-    LARRE.calculate_torque()
+# while True:
+#     LARRE.calculate_torque()
 # machine = StateMachine.ExoStateMachine(LARRE)

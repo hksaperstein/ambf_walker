@@ -335,7 +335,7 @@ class Exoskeleton(Model.Model):
 
     def calculate_torque(self):
         left_leg_force, right_leg_force = self.get_leg_sensors()
-        print(left_leg_force[0].y, right_leg_force[0].y)
+        print(round(left_leg_force[0].y, 3), right_leg_force[0].y)
         # front_left_thigh_tab_force = [left_leg_force[0].x, left_leg_force[0].y, left_leg_force[0].z]
         # front_left_shank_tab_force = [left_leg_force[1].x, left_leg_force[1].y, left_leg_force[1].z]
         # front_right_thigh_tab_force = [right_leg_force[0].x, right_leg_force[0].y, right_leg_force[0].z]

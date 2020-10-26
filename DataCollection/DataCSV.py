@@ -60,7 +60,7 @@ class DataCSVNode():
                                  self.body_q[3], self.robot_q[3],
                                  self.body_q[4], self.robot_q[4],
                                  self.body_q[5], self.robot_q[5]])
-                rospy.sleep(.25)
+                # rospy.sleep(.25)
 
 if __name__ == '__main__':
     csv_node = DataCSVNode()
