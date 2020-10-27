@@ -432,8 +432,8 @@ class LQR(smach.State):
             q = np.array(7*[0.0])
             qd = np.array(7*[0.0])
             qdd = np.append(self.us2[self.count], [0.0])
-            self.send(q, qd, qdd, "Temp", [self.count])
-            self.pub.publish(q)
+            self.send(q, qd, qdd, "LQR", [self.count])
+            #self.pub.publish(q)  ####change !!!!!
             self.rate.sleep()
             self.count += 1
             return "LQRing"
@@ -462,12 +462,13 @@ class Temp(smach.State):
             info = "converged" if converged else ("accepted" if accepted else "failed")
             print("iteration", iteration_count, info, J_opt)
 
-        max_bounds = 8.0
-        min_bounds = -8.0
+        #max_bounds = 8.0
+        #min_bounds = -8.0
+        ##### changed !!!!!!!!
         def f(x, u, i):
-            diff = (max_bounds - min_bounds) / 2.0
-            mean = (max_bounds + min_bounds) / 2.0
-            u = diff * np.tanh(u) + mean
+            #diff = (max_bounds - min_bounds) / 2.0
+            #mean = (max_bounds + min_bounds) / 2.0
+            #u = diff * np.tanh(u) + mean
             y = Model.runge_integrator(self._model.get_rbdl_model(), x, 0.01, u)
             return np.array(y)
 
@@ -494,7 +495,13 @@ class Temp(smach.State):
         x0 = x_path[0]
         x_path = np.array(x_path)
         self.u_path = np.array(u_path)
-        R = 0.1 * np.eye(dynamics.action_size)
+
+        R = 5.0e-4 * np.eye(dynamics.action_size)
+        R[3,3] = 3.0e-3
+        R[4,4] = 3.0e-3
+        R[5,5] = 3.0e-3
+
+        ##R = 0.1 * np.eye(dynamics.action_size)  changed !!!!!!
         #
         cost2 = PathQsRCost(Q, R, x_path=x_path, u_path=self.u_path)
         #
@@ -524,8 +531,8 @@ class StairDMP(smach.State):
         rospy.wait_for_service('joint_cmd')
         self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
         self._model = model
-        self.runnerZ = GMMRunner.GMMRunner("/home/nathanielgoldfarb/stair_traj_learning/Main/toeZ_all.pickle")  # make_toeZ([file1, file2], hills3, nb_states, "toe_IK")
-        self.runnerY = GMMRunner.GMMRunner("/home/nathanielgoldfarb/stair_traj_learning/Main/toeY_all.pickle")  # make_toeY([file1, file2], hills3, nb_states, "toe_IK")
+        self.runnerZ = GMMRunner.GMMRunner("/home/jack/backup/leg1.pickle")  # make_toeZ([file1, file2], hills3, nb_states, "toe_IK") changed !!!!!!!!!!!
+        self.runnerY = GMMRunner.GMMRunner("/home/jack/backup/leg1.pickle")  # make_toeY([file1, file2], hills3, nb_states, "toe_IK") changed !!!!!!!!!!!
         self.rate = rospy.Rate(10)
         self.msg = DesiredJoints()
         self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)

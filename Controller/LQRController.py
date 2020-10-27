@@ -66,7 +66,7 @@ class LQRController(ControllerBase.BaseController):
         x_path = np.array(x_path)
         u_path = np.array(u_path)
 
-        #####change################################!!!!!
+        #####change################################!!!!! changed
         R = 5.0e-4 * np.eye(dynamics.action_size)
         R[3,3] = 3.0e-3
         R[4,4] = 3.0e-3
