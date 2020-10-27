@@ -13,14 +13,14 @@ from Controller import DynController
 Kp = np.zeros((7, 7))
 Kd = np.zeros((7, 7))
 #
-Kp_hip = 100.0
-Kd_hip = 0.5
+Kp_hip = 25.0
+Kd_hip = 0.0
 
-Kp_knee = 125.0
-Kd_knee = 1.0
+Kp_knee = 50.0
+Kd_knee = 0.5
 
-Kp_ankle = 100.0
-Kd_ankle = 0.4
+Kp_ankle = 85.0
+Kd_ankle = 0.8
 
 Kp[0, 0] = Kp_hip
 Kd[0, 0] = Kd_hip

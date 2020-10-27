@@ -83,6 +83,6 @@ class ControllerNode(object):
                 # traj_msg.data = self.q
                 self.tau_pub.publish(tau_msg)
                 self.traj_pub.publish(traj_msg)
-                self.error_pub.publish(error_msg)
+                # self.error_pub.publish(error_msg)
                 rate.sleep()
 

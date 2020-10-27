@@ -8,7 +8,7 @@ from Controller import ControllerNode
 from Model import Exoskeleton
 import rospy
 from ambf_client import Client
-from Controller import DynController, MPCController, TempController
+from Controller import DynController, MPCController, FeedForwardController
 
 Kp = np.zeros((7, 7))
 Kd = np.zeros((7, 7))
@@ -60,10 +60,10 @@ mpc = MPCController.MPCController(LARRE, LARRE.get_runner())
 
 # lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
 
-temp = TempController.TempController(LARRE)
+FF = FeedForwardController.FeedForwardController(LARRE, Kp, Kd)
 controllers = {'Dyn': Dyn,
                 "MPC": mpc,
-               "Temp": temp}
+               "FF": FF}
 
 cnrl = ControllerNode.ControllerNode(LARRE, controllers)
 

@@ -6,16 +6,17 @@ from . import PDController
 from sensor_msgs.msg import JointState
 from . import ControllerBase
 
-class TempController(ControllerBase.BaseController):
+class FeedForwardController(ControllerBase.BaseController):
 
-    def __init__(self, model):
+    def __init__(self, model, Kp,Kd):
         """
 
         :param model:
         :param kp:
         :param kd:
         """
-        super(TempController, self).__init__(model)
+        super(FeedForwardController, self).__init__(model)
+        self.pdController = PDController.PDController(model, Kp, Kd)
 
     def set_gains(self, kp, kd):
         """
@@ -35,8 +36,13 @@ class TempController(ControllerBase.BaseController):
         :param qdd:
         :return:
         """
-
+        aq = np.zeros(len(q))
+        if q is not None and qd is not None:
+            e = q - self._model.q
+            ed = qd - self._model.qd
+            aq = self.pdController.calc_tau(e, ed)
+            aq += qdd
         tau = qdd
-        return tau + self._model.grav(q)
+        return tau
 
 
