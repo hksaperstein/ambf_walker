@@ -104,14 +104,14 @@ class DoublePendulum(Model.Model):
         mass["top"] = 1
         mass["bottom"] = 1
         parent_dist["head"] = np.array([0.0, 0.0, 0.0])
-        parent_dist["top"] = np.array([1.6763, 2.293, 3.1565])
-        parent_dist["bottom"] = np.array([-0.0687, 0.0044, -0.6083])
+        parent_dist["top"] = np.array([0.0, 0.0, 0.0])
+        parent_dist["bottom"] = np.array([0.0, 0.0, -1.6])
         inertia["head"] = np.diag([0.0, 0.0, 0.0])
-        inertia["top"] = np.diag([0.6656, 0.6416, 0.0272])
-        inertia["bottom"] = np.diag([0.6656, 0.6416, 0.0272])
+        inertia["top"] = np.diag([1.3117, 1.2876, 0.0274])
+        inertia["bottom"] = np.diag([1.3131, 1.2891, 0.0274])
         com["head"] = np.array([0.0, 0.0, 0.0])
-        com["top"] = np.array([0.0, 0.0, 0.0])
-        com["bottom"] = np.array([0.0, 0.0, 0.0])
+        com["top"] = np.array([0.0062, -0.0107, -0.8037])
+        com["bottom"] = np.array([0.0088, -0.0091, -0.8046])
 
         head = rbdl.Body.fromMassComInertia(mass["head"], com["head"], inertia["head"])
         top = rbdl.Body.fromMassComInertia(mass["top"], com["top"], inertia["top"])
@@ -195,8 +195,8 @@ class DoublePendulum(Model.Model):
         force4 = np.array([12.0, 22.0, 22.0])
         forces = [force1, force2, force3, force4]
 
-        point1 = np.array([2.0, 2.0, 2.0])
-        point2 = np.array([4.0, 4.0, 4.0])
+        point1 = np.array([0.000, -0.00, -0.8])
+        point2 = np.array([0.000, -0.00, -0.8])
 
         points = [point1, point2]
         bodies = [self.top, self.bottom]
@@ -209,4 +209,5 @@ class DoublePendulum(Model.Model):
 
                 rbdl.CalcPointJacobian(self.rbdl_model, np.array([0.0, 0.0]), body, points[i], J[i])
                 J_t = np.transpose(J[i])
+                # print(J[i], '\n', J_t)
                 print(np.dot(J_t, np.transpose(force)))
