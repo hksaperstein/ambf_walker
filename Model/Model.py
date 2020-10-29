@@ -13,9 +13,11 @@ from sensor_msgs.msg import JointState
 
 class Model(object):
 
-    def __init__(self, client, joint_names=[]):
+    def __init__(self, client, model_name, joint_names):
 
+        self._rbdl_model = None
         self._client = client
+        self._model_name = model_name
         self._q = np.array([])
         self._qd = np.array([])
         self.tau = np.array([])
@@ -25,22 +27,38 @@ class Model(object):
         self._selected_joint_names = joint_names
         self._updater = Thread(target=self.update)
         self._enable_control = False
-        self.sub_torque = rospy.Subscriber("joint_torque", JointState, self.torque_cb)
-        self.q_pub = rospy.Publisher("q", Float32MultiArray, queue_size=1)
+        self.sub_torque = rospy.Subscriber(self.model_name + "_joint_torque", JointState, self.torque_cb)
+        self.q_pub = rospy.Publisher(self.model_name + "_q", Float32MultiArray, queue_size=1)
+
+    @property
+    def rbdl_model(self):
+        return self._rbdl_model
+
+    @rbdl_model.setter
+    def rbdl_model(self, value):
+        self._rbdl_model = value
+
+    @property
+    def model_name(self):
+        return self._model_name
+
+    @model_name.setter
+    def model_name(self, value):
+        self._model_name = value
 
     def torque_cb(self, tau):
         self.update_torque(list(tau.effort))
 
     def update_torque(self, tau):
         """
-
+self.rbdl_model = self.dynamic_model()
         :type tau: List
         """
         self.tau = tau
         self._enable_control = True
 
-    def get_rbdl_model(self):
-        return self._model
+    # def get_rbdl_model(self):
+    #     return self._model
 
     @property
     def enable_control(self):
@@ -134,7 +152,9 @@ class Model(object):
     def calculate_dynamics(self, qdd):
         pass
 
-
+    @abc.abstractmethod
+    def calculate_torque(self):
+        pass
 # def runge_integrator(model, t, y, h, tau):
 #
 #     k1 = rhs(model, y,tau)

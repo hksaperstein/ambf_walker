@@ -2963,7 +2963,7 @@ JOINT RobRightShank-RobRightFoot:
   max motor impulse: 0.05000000074505806
   damping: 0.5
 JOINT Hip-RobLeftThigh:
-  name: Hip-RobLeftThigh
+    name: Hip-RobLeftThigh
   parent: BODY Hip
   child: BODY RobLeftThigh
   parent axis:

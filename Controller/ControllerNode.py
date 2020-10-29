@@ -17,10 +17,10 @@ class ControllerNode(object):
         self.lock = Lock()
         self.controller = self._controllers["Dyn"]
         self._updater = Thread(target=self.set_torque)
-        self.sub_set_points = rospy.Subscriber("set_points", DesiredJoints, self.update_set_point)
-        self.tau_pub = rospy.Publisher("joint_torque", JointState, queue_size=1)
-        self.traj_pub = rospy.Publisher("trajectory", Float32MultiArray, queue_size=1)
-        self.error_pub = rospy.Publisher("Error", Float32MultiArray, queue_size=1)
+        self.sub_set_points = rospy.Subscriber(self.model.model_name + "_set_points", DesiredJoints, self.update_set_point)
+        self.tau_pub = rospy.Publisher(self.model.model_name + "_joint_torque", JointState, queue_size=1)
+        self.traj_pub = rospy.Publisher(self.model.model_name + "_trajectory", Float32MultiArray, queue_size=1)
+        self.error_pub = rospy.Publisher(self.model.model_name + "_Error", Float32MultiArray, queue_size=1)
         self.service = rospy.Service('joint_cmd', DesiredJointsCmd, self.joint_cmd_server)
         self._enable_control = False
         self.ctrl_list = []
@@ -28,6 +28,14 @@ class ControllerNode(object):
         self.qd = np.array([])
         self.qdd = np.array([])
         self.other = np.array([])
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
 
     def update_set_point(self, msg):
         """
