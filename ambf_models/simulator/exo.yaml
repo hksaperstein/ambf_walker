@@ -67,6 +67,7 @@ joints:
 - JOINT SensorRightFoot3-SensorRightFoot3Base
 - JOINT SensorRightFoot3Base-SensorRightFoot3Tab
 - JOINT RobRightFoot-SensorRightFoot3Leg
+sensors: [SENSOR RightFootProx, SENSOR LeftFootProx, SENSOR RightSideProx, SENSOR LeftSideProx]
 high resolution path: ./high_res/
 low resolution path: ./low_res/
 ignore inter-collision: false
@@ -358,7 +359,7 @@ BODY RobLeftShank:
 BODY RobLeftFoot:
   name: RobLeftFoot
   mesh: RobLeftFoot.STL
-  mass: 0.866
+  mass: 0.86
   collision margin: 0.001
   scale: 1.0
   location:
@@ -2059,7 +2060,7 @@ BODY RobRightShank:
 BODY RobRightFoot:
   name: RobRightFoot
   mesh: RobRightFoot.STL
-  mass: 1.0
+  mass: 0.86
   collision margin: 0.001
   scale: 1.0
   location:
@@ -2132,30 +2133,15 @@ JOINT Hip-Crutches:
   name: Hip-Crutches
   parent: BODY Hip
   child: BODY Crutches
-  parent axis:
-    x: 0.0
-    y: 0.0
-    z: 1.0
-  parent pivot:
-    x: -0.1227
-    y: -0.1536
-    z: -0.1441
-  child axis:
-    x: 0.0
-    y: -0.5
-    z: 0.866
-  child pivot:
-    x: -0.1229
-    y: 0.387
-    z: 0.54
-  joint limits:
-    high: 1.2
-    low: -1.2
-  enable feedback: false
-  passive: false
+  parent axis: {x: 0.0, y: 0.0, z: 1.0}
+  parent pivot: {x: 0.0, y: 0.0, z: 0.0}
+  child axis: {x: 0.0, y: -0.5, z: 0.866}
+  child pivot: {x: -0.0, y: 0.7529, z: 0.921}
+  joint limits: {high: 0.3, low: 0.0}
+  controller: {P: 1000, I: 0, D: 1}
   detached: true
-  type: fixed
-  damping: 0.0
+  type: prismatic
+  damping: 0.5
 JOINT RobLeftThigh-RobLeftShank:
   name: RobLeftThigh-RobLeftShank
   parent: BODY RobLeftThigh
@@ -3020,3 +3006,503 @@ JOINT Hip-RobRightThigh:
   type: revolute
   max motor impulse: 0.05000000074505806
   damping: 0.5
+
+
+SENSOR RightFootProx:
+  name: RightFootProx
+  type: Proximity
+  location:
+    orientation: {p: 0.0, r: 0.0, y: 0.0}
+    position: {x: 0.08, y: -0.3, z: -0.02}
+  array:
+    -
+      offset: {x: 0.1, y: 0.2, z: -0.01}
+      direction: {x: 0.0, y: -0.1, z: 0.0}
+  range: 0.15
+  parent: /ambf/env/BODY RobRightFoot
+  visible: True
+
+SENSOR LeftFootProx:
+  name: LeftFootProx
+  type: Proximity
+  location:
+    orientation: {p: 0.0, r: 0.0, y: 0.0}
+    position: {x: -0.08, y: -0.3, z: -0.02}
+  array:
+    -
+      offset: {x: -0.1, y: 0.2, z: -0.01}
+      direction: {x: 0.0, y: -0.1, z: 0.0}
+  range: 0.15
+  parent: /ambf/env/BODY RobLeftFoot
+  visible: True
+
+SENSOR RightSideProx:
+  name: RightSideProx
+  type: Proximity
+  location:
+    orientation: {p: 0.0, r: 0.0, y: 0.0}
+    position: {x: .28, y: -0.2, z: 0.0}
+  array:
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -1.0,z: -0.0}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -1.0,z: -0.013}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -1.0,z: -0.025}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.999,z: -0.038}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.999,z: -0.051}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.998,z: -0.064}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.997,z: -0.076}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.996,z: -0.089}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.995,z: -0.102}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.993,z: -0.114}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.992,z: -0.127}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.99,z: -0.14}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.988,z: -0.152}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.986,z: -0.165}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.984,z: -0.177}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.982,z: -0.19}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.979,z: -0.202}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.977,z: -0.215}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.974,z: -0.227}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.971,z: -0.24}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.968,z: -0.252}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.964,z: -0.264}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.961,z: -0.277}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.957,z: -0.289}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.954,z: -0.301}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.95,z: -0.313}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.946,z: -0.325}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.941,z: -0.337}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.937,z: -0.349}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.933,z: -0.361}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.928,z: -0.373}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.923,z: -0.385}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.918,z: -0.396}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.913,z: -0.408}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.908,z: -0.42}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.902,z: -0.431}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.897,z: -0.443}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.891,z: -0.454}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.885,z: -0.465}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.879,z: -0.477}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.873,z: -0.488}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.867,z: -0.499}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.86,z: -0.51}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.854,z: -0.521}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.847,z: -0.532}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.84,z: -0.542}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.833,z: -0.553}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.826,z: -0.563}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.819,z: -0.574}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.812,z: -0.584}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.804,z: -0.595}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.796,z: -0.605}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.789,z: -0.615}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.781,z: -0.625}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.773,z: -0.635}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.765,z: -0.645}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.756,z: -0.654}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.748,z: -0.664}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.739,z: -0.673}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.731,z: -0.683}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.722,z: -0.692}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.713,z: -0.701}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.704,z: -0.71}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.695,z: -0.719}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.686,z: -0.728}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.676,z: -0.736}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.667,z: -0.745}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.657,z: -0.753}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.648,z: -0.762}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.638,z: -0.77}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.628,z: -0.778}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.618,z: -0.786}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.608,z: -0.794}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.598,z: -0.801}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.588,z: -0.809}
+  range: 1.5
+  parent: /ambf/env/BODY Hip
+  visible: False
+
+
+SENSOR LeftSideProx:
+  name: LeftSideProx
+  type: Proximity
+  location:
+    orientation: {p: 0.0, r: 0.0, y: 0.0}
+    position: {x: -0.28, y: -0.2, z: 0.0}
+  array:
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -1.0,z: -0.0}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -1.0,z: -0.013}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -1.0,z: -0.025}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.999,z: -0.038}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.999,z: -0.051}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.998,z: -0.064}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.997,z: -0.076}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.996,z: -0.089}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.995,z: -0.102}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.993,z: -0.114}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.992,z: -0.127}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.99,z: -0.14}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.988,z: -0.152}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.986,z: -0.165}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.984,z: -0.177}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.982,z: -0.19}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.979,z: -0.202}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.977,z: -0.215}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.974,z: -0.227}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.971,z: -0.24}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.968,z: -0.252}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.964,z: -0.264}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.961,z: -0.277}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.957,z: -0.289}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.954,z: -0.301}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.95,z: -0.313}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.946,z: -0.325}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.941,z: -0.337}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.937,z: -0.349}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.933,z: -0.361}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.928,z: -0.373}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.923,z: -0.385}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.918,z: -0.396}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.913,z: -0.408}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.908,z: -0.42}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.902,z: -0.431}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.897,z: -0.443}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.891,z: -0.454}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.885,z: -0.465}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.879,z: -0.477}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.873,z: -0.488}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.867,z: -0.499}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.86,z: -0.51}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.854,z: -0.521}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.847,z: -0.532}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.84,z: -0.542}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.833,z: -0.553}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.826,z: -0.563}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.819,z: -0.574}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.812,z: -0.584}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.804,z: -0.595}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.796,z: -0.605}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.789,z: -0.615}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.781,z: -0.625}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.773,z: -0.635}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.765,z: -0.645}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.756,z: -0.654}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.748,z: -0.664}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.739,z: -0.673}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.731,z: -0.683}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.722,z: -0.692}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.713,z: -0.701}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.704,z: -0.71}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.695,z: -0.719}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.686,z: -0.728}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.676,z: -0.736}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.667,z: -0.745}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.657,z: -0.753}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.648,z: -0.762}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.638,z: -0.77}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.628,z: -0.778}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.618,z: -0.786}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.608,z: -0.794}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.598,z: -0.801}
+
+    - offset: {x: 0.0, y: 0.0, z: 0.0}
+      direction: {x: 0.0, y: -0.588,z: -0.809}
+  range: 1.5
+  parent: /ambf/env/BODY Hip
+  visible: False
