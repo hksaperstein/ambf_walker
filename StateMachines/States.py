@@ -158,7 +158,7 @@ class Walk(smach.State):
         self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
         self._model = model
         self.runner = self._model.get_walker()
-        self.rate = rospy.Rate(10)
+        self.rate = rospy.Rate(100)
         self.msg = DesiredJoints()
         self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
         self.count = 0
@@ -195,7 +195,7 @@ class Walk(smach.State):
         else:
             self.count = 0
             self.runner.reset()
-            return "walking"
+            return "walked"
 
 class GoTo(smach.State):
 
@@ -436,10 +436,8 @@ class LQR(smach.State):
             ddx = self.runner.ddx
             q = np.append(x, [0.0])
             qd = np.append(dx, [0.0])
-            qdd = np.append(ddx, [0.0])
             qdd = np.append(self.us2[self.count], [0.0])
             self.send(q, qd, qdd, "FF", [self.count])
-            #self.pub.publish(q)
             self.rate.sleep()
             self.count += 1
             return "LQRing"

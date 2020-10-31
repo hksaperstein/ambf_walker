@@ -60,10 +60,11 @@ mpc = MPCController.MPCController(LARRE, LARRE.get_runner())
 
 # lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
 
-temp = FeedForwardController.TempController(LARRE)
+FF = FeedForwardController.FeedForwardController(LARRE, Kp, Kd)
+
 controllers = {'Dyn': Dyn,
                 "MPC": mpc,
-               "Temp": temp}
+               "FF": FF}
 
 cnrl = ControllerNode.ControllerNode(LARRE, controllers)
 

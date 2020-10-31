@@ -114,7 +114,7 @@ class Exoskeleton(Model.Model):
     def right_foot_prox_callback(self, msg):
         self._right_foot_prox = msg
 
-    def check_foot_collision(self):
+    def check_left_foot_collision(self):
         return any(self._left_foot_prox.triggered)
 
     def check_foot_collision(self):
@@ -352,9 +352,9 @@ class Exoskeleton(Model.Model):
         return fk
 
     def stance_trajectory(self, tf=2, dt=0.01):
-        hip = Model.get_traj(0.0, -0.2, 0.0, 0.0, tf, dt)
-        knee = Model.get_traj(0.0, 0.20, 0.0, 0., tf, dt)
-        ankle = Model.get_traj(-0.349, -0.2, 0.0, 0.0, tf, dt)
+        hip = Model.get_traj(0.0, 0.5, 0.0, 0.0, tf, dt)
+        knee = Model.get_traj(0.0, 0.75, 0.0, 0., tf, dt)
+        ankle = Model.get_traj(-0.349, -0.11, 0.0, 0.0, tf, dt)
         return hip, knee, ankle
 
     def get_runner(self):
