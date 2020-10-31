@@ -61,6 +61,7 @@ mpc = MPCController.MPCController(LARRE, LARRE.get_runner())
 # lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
 
 FF = FeedForwardController.FeedForwardController(LARRE, Kp, Kd)
+
 controllers = {'Dyn': Dyn,
                 "MPC": mpc,
                "FF": FF}

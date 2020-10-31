@@ -438,7 +438,6 @@ class LQR(smach.State):
             qd = np.append(dx, [0.0])
             qdd = np.append(self.us2[self.count], [0.0])
             self.send(q, qd, qdd, "FF", [self.count])
-            self.pub.publish(q)
             self.rate.sleep()
             self.count += 1
             return "LQRing"
