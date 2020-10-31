@@ -358,10 +358,10 @@ class Exoskeleton(Model.Model):
         return hip, knee, ankle
 
     def get_runner(self):
-        return TPGMMRunner.TPGMMRunner("/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/config/gotozero.pickle")
+        return TPGMMRunner.TPGMMRunner("/home/jack/catkin_ws/src/ambf_walker/config/gotozero.pickle")
 
     def get_walker(self):
-        return TPGMMRunner.TPGMMRunner("/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/config/walk2.pickle")
+        return TPGMMRunner.TPGMMRunner("/home/jack/catkin_ws/src/ambf_walker/config/walk2.pickle")
 
     def linearize(self):
         pass
