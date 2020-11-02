@@ -58,7 +58,7 @@ Dyn = DynController.DynController(LARRE, Kp, Kd)
 
 FF = FeedForwardController.FeedForwardController(LARRE, Kp, Kd)
 controllers = {'Dyn': Dyn,
-               "FF":FF}
+               "FF": FF}
 
 cnrl = ControllerNode.ControllerNode(LARRE, controllers)
 

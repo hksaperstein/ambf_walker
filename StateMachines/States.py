@@ -419,7 +419,7 @@ class LQR(smach.State):
         rospy.wait_for_service('joint_cmd')
         self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
         self._model = model
-        self.rate = rospy.Rate(100)
+        self.rate = rospy.Rate(10)
         file = "/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/config/tau.npy"
         self.runner = self._model.get_walker()
         with open(file, 'rb') as f:
@@ -430,11 +430,13 @@ class LQR(smach.State):
     def execute(self, userdata):
 
         if self.count < self.runner.get_length():
+            self.runner.step()
             x = self.runner.x
             dx = self.runner.dx
+            ddx = self.us2[self.count]
             q = np.append(x, [0.0])
             qd = np.append(dx, [0.0])
-            qdd = np.append(self.us2[self.count], [0.0])
+            qdd = np.append(ddx, [0.0])
             self.send(q, qd, qdd, "FF", [self.count])
             self.rate.sleep()
             self.count += 1
