@@ -56,22 +56,9 @@ LARRE = Exoskeleton.Exoskeleton(_client, joints, 56, 1.56)
 Dyn = DynController.DynController(LARRE, Kp, Kd)
 
 
-lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
 FF = FeedForwardController.FeedForwardController(LARRE, Kp, Kd)
 controllers = {'Dyn': Dyn,
-               "LQR":lqr,
                "FF":FF}
-
-# lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
-
-# mpc = MPCController.MPCController(LARRE, LARRE.get_runner())
-
-# temp = TempController.TempController(LARRE)
-# controllers = {'Dyn': Dyn,
-#                 "MPC": mpc,
-#                "Temp": temp}
-
-# lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
 
 cnrl = ControllerNode.ControllerNode(LARRE, controllers)
 
