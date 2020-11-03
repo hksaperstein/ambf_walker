@@ -437,6 +437,12 @@ class LQR(smach.State):
             q = np.append(x, [0.0])
             qd = np.append(dx, [0.0])
             qdd = np.append(ddx, [0.0])
+            msg = DesiredJoints()
+            msg.q = q.tolist()
+            msg.qd = qd.tolist()
+            msg.qdd = qdd.tolist()
+            msg.other = q.tolist()
+            msg.controller = "FF"
             self.send(q, qd, qdd, "FF", [self.count])
             msg = DesiredJoints()
             msg.q = q.tolist()

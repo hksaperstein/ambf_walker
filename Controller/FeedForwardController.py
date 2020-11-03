@@ -42,7 +42,7 @@ class FeedForwardController(ControllerBase.BaseController):
             ed = qd - self._model.qd
             aq = self.pdController.calc_tau(e, ed)
             aq += qdd
-        tau = qdd
+        tau = aq
         return tau
 
 
