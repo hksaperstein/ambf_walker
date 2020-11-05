@@ -46,14 +46,14 @@ Kd_Dyn[5, 5] = Kd_ankle
 Kp_FF = np.zeros((7, 7))
 Kd_FF = np.zeros((7, 7))
 #
-Kp_hip = 100.0
-Kd_hip = 0.5
+Kp_hip = 150.0
+Kd_hip = 0.85
 
 Kp_knee = 50.0
-Kd_knee = 0.1
+Kd_knee = 1.0
 
-Kp_ankle = 25.0
-Kd_ankle = 0.1
+Kp_ankle = 50.0
+Kd_ankle = 0.2
 
 Kp_FF[0, 0] = Kp_hip
 Kd_FF[0, 0] = Kd_hip
