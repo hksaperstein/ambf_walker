@@ -10,10 +10,10 @@ from Model import Model
 from std_msgs.msg import Empty,String
 import matplotlib.pyplot as plt
 from ambf_walker.srv import DesiredJointsCmdRequest, DesiredJointsCmd
-from ilqr.controller import RecedingHorizonController
-from ilqr.cost import PathQsRCost
-from ilqr import iLQR
-from ilqr.dynamics import FiniteDiffDynamics
+#from ilqr.controller import RecedingHorizonController
+#from ilqr.cost import PathQsRCost
+#from ilqr import iLQR
+#from ilqr.dynamics import FiniteDiffDynamics
 from GaitAnaylsisToolkit.LearningTools.Runner import GMMRunner
 import numpy.polynomial.polynomial as poly
 
@@ -160,7 +160,7 @@ class Walk(smach.State):
         self.runner = self._model.get_walker()
         self.rate = rospy.Rate(10)
         self.msg = DesiredJoints()
-        self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
+        self.pub = rospy.Publisher(self._model.model_name + "_set_points", DesiredJoints, queue_size=1)
         self.count = 0
 
     def execute(self, userdata):
@@ -173,7 +173,7 @@ class Walk(smach.State):
                 start.append(np.array([q]))
 
             self.runner.update_start(start)
-
+        print(self.runner.get_length())
         if count < self.runner.get_length():
 
             self.runner.step()
@@ -183,13 +183,15 @@ class Walk(smach.State):
             q = np.append(x, [0.0])
             qd = np.append(dx, [0.0])
             qdd = np.append(ddx, [0.0])
-            self.msg.q = q
-            self.msg.qd = qd
-            self.msg.qdd = qdd
-            self.msg.controller = "Dyn"
-            self.pub.publish(self.msg)
+            self._model.handle.set_multiple_joint_pos(q, [0, 1, 2, 3, 4, 5, 6])
+            # self.msg.q = q
+            # self.msg.qd = qd
+            # self.msg.qdd = qdd
+            # self.msg.controller = "Dyn"
+            # self.pub.publish(self.msg)
             #self.send(q, qd, qdd,"Dyn",[])
             self.count += 1
+            print(count)
             self.rate.sleep()
             return "walking"
         else:
@@ -411,7 +413,7 @@ class MPC2(smach.State):
             return "MPC2ed"
 
             pass
-
+"""
 class LQR(smach.State):
 
     def __init__(self, model, outcomes=["LQRing", "LQRed"]):
@@ -668,3 +670,5 @@ class StairDMP(smach.State):
             #plt.plot(self.Zpoints)
             plt.show()
             return "staired"
+
+"""

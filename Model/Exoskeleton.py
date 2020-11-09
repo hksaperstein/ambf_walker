@@ -189,13 +189,13 @@ class Exoskeleton(Model.Model):
 
     def calculate_dynamics(self, qdd):
         tau = np.asarray([0.0] * self._joint_num)
-        rbdl.InverseDynamics(self._model, self.q[0:6], self.qd[0:6], qdd[0:6], tau)
+        rbdl.InverseDynamics(self.rbdl_model, self.q[0:6], self.qd[0:6], qdd[0:6], tau)
         return tau
 
     def grav(self, q ):
         tau = np.asarray([0.0] * self._joint_num)
         qd = qdd = np.asarray([0.0] * self._joint_num)
-        rbdl.InverseDynamics(self._model, q, qd, qdd, tau)
+        rbdl.InverseDynamics(self.rbdl_model, q, qd, qdd, tau)
         return tau
 
     def dynamic_model(self):
@@ -317,7 +317,7 @@ class Exoskeleton(Model.Model):
         data = rbdl.CalcBodyToBaseCoordinates(self.rbdl_model, self.q, self.left_foot, point_local)
         fk["left_ankle"] = Point.Point(data[0], data[1], data[2])
 
-        data = rbdl.CalcBodyToBaseCoordinates(self._model, self.q, self.right_thigh, point_local)
+        data = rbdl.CalcBodyToBaseCoordinates(self.rbdl_model, self.q, self.right_thigh, point_local)
         fk["right_hip"] = Point.Point(data[0], data[1], data[2])
         data = rbdl.CalcBodyToBaseCoordinates(self.rbdl_model, self.q, self.right_shank, point_local)
         fk["right_knee"] = Point.Point(data[0], data[1], data[2])
@@ -349,16 +349,16 @@ class Exoskeleton(Model.Model):
         return fk
 
     def stance_trajectory(self, tf=2, dt=0.01):
-        hip = Model.get_traj(0.0, -0.2, 0.0, 0.0, tf, dt)
-        knee = Model.get_traj(0.0, 0.20, 0.0, 0., tf, dt)
-        ankle = Model.get_traj(-0.349, -0.2, 0.0, 0.0, tf, dt)
+        hip = Model.get_traj(0.0, 0.5, 0.0, 0.0, tf, dt)
+        knee = Model.get_traj(0.0, 0.75, 0.0, 0., tf, dt)
+        ankle = Model.get_traj(-0.349, -0.11, 0.0, 0.0, tf, dt)
         return hip, knee, ankle
 
     def get_runner(self):
         return TPGMMRunner.TPGMMRunner("/home/hksaperstein/WPI/thesis/git/catkin_ws/src/ambf_walker/config/gotozero.pickle")
 
     def get_walker(self):
-        return TPGMMRunner.TPGMMRunner("/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/config/walk.pickle")
+        return TPGMMRunner.TPGMMRunner("/home/hksaperstein/WPI/thesis/git/catkin_ws/src/ambf_walker/config/walk.pickle")
 
     def linearize(self):
         pass
