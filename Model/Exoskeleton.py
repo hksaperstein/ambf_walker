@@ -358,7 +358,7 @@ class Exoskeleton(Model.Model):
         return TPGMMRunner.TPGMMRunner("/home/hksaperstein/WPI/thesis/git/catkin_ws/src/ambf_walker/config/gotozero.pickle")
 
     def get_walker(self):
-        return TPGMMRunner.TPGMMRunner("/home/hksaperstein/WPI/thesis/git/catkin_ws/src/ambf_walker/config/walk.pickle")
+        return TPGMMRunner.TPGMMRunner("/home/hksaperstein/WPI/thesis/git/catkin_ws/src/ambf_walker/config/walk2.pickle")
 
     def linearize(self):
         pass

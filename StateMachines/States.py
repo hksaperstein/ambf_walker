@@ -173,7 +173,7 @@ class Walk(smach.State):
                 start.append(np.array([q]))
 
             self.runner.update_start(start)
-        print(self.runner.get_length())
+        # print(self.runner.get_length())
         if count < self.runner.get_length():
 
             self.runner.step()
@@ -184,14 +184,14 @@ class Walk(smach.State):
             qd = np.append(dx, [0.0])
             qdd = np.append(ddx, [0.0])
             self._model.handle.set_multiple_joint_pos(q, [0, 1, 2, 3, 4, 5, 6])
-            # self.msg.q = q
-            # self.msg.qd = qd
-            # self.msg.qdd = qdd
-            # self.msg.controller = "Dyn"
-            # self.pub.publish(self.msg)
-            #self.send(q, qd, qdd,"Dyn",[])
+            self.msg.q = q
+            self.msg.qd = qd
+            self.msg.qdd = qdd
+            self.msg.controller = "Dyn"
+            self.pub.publish(self.msg)
+            # self.send(q, qd, qdd,"Dyn",[])
             self.count += 1
-            print(count)
+            # print(count)
             self.rate.sleep()
             return "walking"
         else:
