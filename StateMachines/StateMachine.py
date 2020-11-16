@@ -16,13 +16,11 @@ class ExoStateMachine(object):
                                     transitions={'Initializing': 'Initialize',
                                                   'Initialized': 'Main'})
 
-            smach.StateMachine.add('Main', Main(model, ["Poly", "DMP", "Lower", "MPC", "LQR", "Temp"]),
+            smach.StateMachine.add('Main', Main(model, ["Poly", "DMP", "Lower", "walk" ] ),
                                    transitions={'Poly': 'Listening',
                                                 'DMP': 'DMP',
                                                 'Lower':'LowerBody',
-                                                'MPC':'MPC',
-                                                "LQR":"LQR",
-                                                "Temp":"Temp"})
+                                                "walk": "walk"})
 
             smach.StateMachine.add('LowerBody', LowerBody(model),
                                    transitions={'Lowering': 'LowerBody',
@@ -33,15 +31,15 @@ class ExoStateMachine(object):
                                                 'stepped': 'Main'},
                                    remapping={'q': 'q'})
 
-            smach.StateMachine.add('MPC', MPC(model),
-                                   transitions={'MPCing': 'MPC',
-                                                'MPCed': 'Main'},
-                                   remapping={'q': 'q'})
+            # smach.StateMachine.add('MPC2', MPC2(model),
+            #                        transitions={'MPC2ing': 'MPC2',
+            #                                     'MPC2ed': 'Main'},
+            #                        remapping={'q': 'q'})
 
-            smach.StateMachine.add('LQR', LQR(model),
-                                   transitions={'LQRing': 'LQR',
-                                                'LQRed': 'Main'},
-                                   remapping={'q': 'q'})
+            # smach.StateMachine.add('LQR', LQR(model),
+            #                        transitions={'LQRing': 'LQR',
+            #                                     'LQRed': 'Main'},
+            #                        remapping={'q': 'q'})
 
             smach.StateMachine.add('Listening', Listening(model),
                                    transitions={'Waiting': 'Listening',
@@ -53,9 +51,19 @@ class ExoStateMachine(object):
                                                 'Followed': 'Main'},
                                    remapping={'q': 'q'})
 
-            smach.StateMachine.add('Temp', Temp(model),
-                                   transitions={'Temping': 'Temp',
-                                                'Temped': 'Main'},
+            # smach.StateMachine.add('Temp', Temp(model),
+            #                        transitions={'Temping': 'Temp',
+            #                                     'Temped': 'Main'},
+            #                        remapping={'q': 'q'})
+
+            # smach.StateMachine.add('stairDMP', StairDMP(model),
+            #                        transitions={'stairing': 'stairDMP',
+            #                                     'staired': 'Main'},
+            #                        remapping={'q': 'q'})
+
+            smach.StateMachine.add('walk', Walk(model),
+                                   transitions={'walking': 'walk',
+                                                'walked': 'Main'},
                                    remapping={'q': 'q'})
 
         outcome = sm.execute()
