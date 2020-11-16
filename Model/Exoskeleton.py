@@ -24,19 +24,16 @@ from sensor_msgs.msg import PointCloud
 
 class Exoskeleton(Model.Model):
 
-    def __init__(self, client, joints, mass, height):
-        self.prox = {}
-        self.prox["LeftSideProx"] = rospy.Publisher('left_leg', PointCloud, queue_size=10)
-        self.prox["RightSideProx"] = rospy.Publisher('right_leg', PointCloud, queue_size=10)
-
-        super(Exoskeleton, self).__init__(client, joint_names=joints)
+    def __init__(self, client, model_name, joints, mass, height, human):
+        super(Exoskeleton, self).__init__(client, model_name=model_name, joint_names=joints)
         self._handle = self._client.get_obj_handle('Hip')
         # Update to current
 
         time.sleep(4)
         self._mass = mass
         self._height = height
-        self._model = self.dynamic_model()
+        self._human = human
+        self.rbdl_model = self.dynamic_model()
         left_joints = {}
         right_joints = {}
 
@@ -192,13 +189,13 @@ class Exoskeleton(Model.Model):
 
     def calculate_dynamics(self, qdd):
         tau = np.asarray([0.0] * self._joint_num)
-        rbdl.InverseDynamics(self._model, self.q[0:6], self.qd[0:6], qdd[0:6], tau)
+        rbdl.InverseDynamics(self.rbdl_model, self.q[0:6], self.qd[0:6], qdd[0:6], tau)
         return tau
 
     def grav(self, q ):
         tau = np.asarray([0.0] * self._joint_num)
         qd = qdd = np.asarray([0.0] * self._joint_num)
-        rbdl.InverseDynamics(self._model, q, qd, qdd, tau)
+        rbdl.InverseDynamics(self.rbdl_model, q, qd, qdd, tau)
         return tau
 
     def dynamic_model(self):
@@ -313,18 +310,18 @@ class Exoskeleton(Model.Model):
 
         point_local = np.array([0.0, 0.0, 0.0])
 
-        data = rbdl.CalcBodyToBaseCoordinates(self._model, self.q, self.left_thigh, point_local)
+        data = rbdl.CalcBodyToBaseCoordinates(self.rbdl_model, self.q, self.left_thigh, point_local)
         fk["left_hip"] = Point.Point(data[0], data[1], data[2])
-        data = rbdl.CalcBodyToBaseCoordinates(self._model, self.q, self.left_shank, point_local)
+        data = rbdl.CalcBodyToBaseCoordinates(self.rbdl_model, self.q, self.left_shank, point_local)
         fk["left_knee"] = Point.Point(data[0], data[1], data[2])
-        data = rbdl.CalcBodyToBaseCoordinates(self._model, self.q, self.left_foot, point_local)
+        data = rbdl.CalcBodyToBaseCoordinates(self.rbdl_model, self.q, self.left_foot, point_local)
         fk["left_ankle"] = Point.Point(data[0], data[1], data[2])
 
-        data = rbdl.CalcBodyToBaseCoordinates(self._model, self.q, self.right_thigh, point_local)
+        data = rbdl.CalcBodyToBaseCoordinates(self.rbdl_model, self.q, self.right_thigh, point_local)
         fk["right_hip"] = Point.Point(data[0], data[1], data[2])
-        data = rbdl.CalcBodyToBaseCoordinates(self._model, self.q, self.right_shank, point_local)
+        data = rbdl.CalcBodyToBaseCoordinates(self.rbdl_model, self.q, self.right_shank, point_local)
         fk["right_knee"] = Point.Point(data[0], data[1], data[2])
-        data = rbdl.CalcBodyToBaseCoordinates(self._model, self.q, self.right_foot, point_local)
+        data = rbdl.CalcBodyToBaseCoordinates(self.rbdl_model, self.q, self.right_foot, point_local)
         fk["right_ankle"] = Point.Point(data[0], data[1], data[2])
 
         q_left = self.get_left_leg().ankle.angle.z
@@ -352,16 +349,16 @@ class Exoskeleton(Model.Model):
         return fk
 
     def stance_trajectory(self, tf=2, dt=0.01):
-        hip = Model.get_traj(0.0, -0.2, 0.0, 0.0, tf, dt)
-        knee = Model.get_traj(0.0, 0.20, 0.0, 0., tf, dt)
-        ankle = Model.get_traj(-0.349, -0.2, 0.0, 0.0, tf, dt)
+        hip = Model.get_traj(0.0, 0.5, 0.0, 0.0, tf, dt)
+        knee = Model.get_traj(0.0, 0.75, 0.0, 0., tf, dt)
+        ankle = Model.get_traj(-0.349, -0.11, 0.0, 0.0, tf, dt)
         return hip, knee, ankle
 
     def get_runner(self):
-        return TPGMMRunner.TPGMMRunner("/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/config/gotozero.pickle")
+        return TPGMMRunner.TPGMMRunner("/home/hksaperstein/WPI/thesis/git/catkin_ws/src/ambf_walker/config/gotozero.pickle")
 
     def get_walker(self):
-        return TPGMMRunner.TPGMMRunner("/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/config/walk.pickle")
+        return TPGMMRunner.TPGMMRunner("/home/hksaperstein/WPI/thesis/git/catkin_ws/src/ambf_walker/config/walk2.pickle")
 
     def linearize(self):
         pass
@@ -434,3 +431,42 @@ class Exoskeleton(Model.Model):
         q3 = -(np.nan_to_num(2*np.pi - q1 - q2) - 2*np.pi) + 0.75*np.pi
 
         return [q1, -q2, q3]
+
+    def calculate_torque(self):
+        left_leg_force, right_leg_force = self.get_leg_sensors()
+        print(round(left_leg_force[0].y, 3), right_leg_force[0].y)
+        # front_left_thigh_tab_force = [left_leg_force[0].x, left_leg_force[0].y, left_leg_force[0].z]
+        # front_left_shank_tab_force = [left_leg_force[1].x, left_leg_force[1].y, left_leg_force[1].z]
+        # front_right_thigh_tab_force = [right_leg_force[0].x, right_leg_force[0].y, right_leg_force[0].z]
+        # front_right_shank_tab_force = [right_leg_force[1].x, right_leg_force[1].y, right_leg_force[1].z]
+        # forces = [front_left_thigh_tab_force, front_left_shank_tab_force, front_right_thigh_tab_force,
+        #           front_right_shank_tab_force]
+        #
+        # # Sensor point locations
+        # # add back sensor logic
+        # front_left_thigh_tab_location = np.array([.11688, -0.08783, -0.19263])
+        # front_right_thigh_tab_location = np.array([-0.1166, -0.08783, -0.19262])
+        # front_left_shank_tab_location = np.array([-0.1721, -0.05487, -0.19992])
+        # front_right_shank_tab_location = np.array([0.02492, -0.05501, -0.19992])
+        # locations = [front_left_thigh_tab_location, front_left_shank_tab_location, front_right_thigh_tab_location, front_right_shank_tab_location]
+        #
+        #
+        # LT, LS, RT, RS = np.zeros((3, 6)), np.zeros((3, 6)), np.zeros((3, 6)), np.zeros((3, 6))
+        # J = [LT, LS, RT, RS]
+        # # need proper body_ids
+        # body_ids = [self.left_thigh, self.left_shank, self.right_thigh, self.right_shank]
+        # body_names = ["left thigh", "left shank", "right thigh", "right shank"]
+        #
+        # # Right Thigh Test
+        # rbdl.CalcPointJacobian(self._human.rbdl_model, self._human.q, body_ids[2], locations[2], J[2])
+        # print(J[2])
+        # RT_T = np.transpose(J[2])
+        # torque = np.dot(RT_T, np.transpose(forces[2]))
+        # print(np.shape(forces[2]), np.shape(torque))
+        # print(torque)
+
+
+        # for i, body in enumerate(body_ids):
+        #     rbdl.CalcPointJacobian(self._human.rbdl_model, self._human.q, body, locations[i], J[i])
+        #     J_t = np.transpose(J[i])
+        #     print(body_names[i], ': ', np.dot(J_t, np.transpose(forces[i])))
