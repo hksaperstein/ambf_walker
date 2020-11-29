@@ -1,4 +1,5 @@
 source ~/.bashrc
+export SCRIPT_PATH=`pwd`
 #source ~/ambf/build/devel/setup.bash
 cd ~/WPI/thesis/git/ambf/bin/lin-x86_64
-./ambf_simulator -a ~/WPI/thesis/git/catkin_ws/src/ambf_walker/ambf_models/Double_Pendulum/pendulum.yaml
+./ambf_simulator -a ${SCRIPT_PATH}/pendulum.yaml
