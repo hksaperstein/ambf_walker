@@ -8,7 +8,7 @@ git clone https://github.com/WPI-AIM-Hybrid-Exoskeleton/ilqr.git
 cd ilqr && python setup.py install
 cd ..
 # shellcheck disable=SC2164
-git clone https://github.com/ORB-HD/rbdl-orb.git
+git clone https://github.com/WPI-AIM-Hybrid-Exoskeleton/rbdl-orb.git
 # shellcheck disable=SC2164
 cd rbdl-orb
 mkdir rbdl-build
