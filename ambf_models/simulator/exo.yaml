@@ -68,6 +68,7 @@ joints:
 - JOINT SensorRightFoot3Base-SensorRightFoot3Tab
 - JOINT RobRightFoot-SensorRightFoot3Leg
 sensors: [SENSOR RightFootProx, SENSOR LeftFootProx, SENSOR RightSideProx, SENSOR LeftSideProx]
+cameras: [depth_camera]
 high resolution path: ./high_res/
 low resolution path: ./low_res/
 ignore inter-collision: false
@@ -3506,3 +3507,5 @@ SENSOR LeftFootProx:
 #  range: 1.5
 #  parent: /ambf/env/BODY Hip
 #  visible: False
+
+

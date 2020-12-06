@@ -425,6 +425,7 @@ class LQR(smach.State):
         with open(file, 'rb') as f:
             self.us2 = np.load(f)
         self.pub = rospy.Publisher("set_points2", DesiredJoints, queue_size=1)
+        self.my_joints = rospy.Publisher("my_joints", DesiredJoints, queue_size=1)
         self.count = 0
 
     def execute(self, userdata):
@@ -445,8 +446,11 @@ class LQR(smach.State):
             msg.controller = "FF"
             self.send(q, qd, qdd, "FF", [self.count])
             msg = DesiredJoints()
+            joints = DesiredJoints()
             msg.q = q.tolist()
+            joints.q = self._model.q.tolist()
             self.pub.publish(msg)
+            self.my_joints.publish(joints)
             self.rate.sleep()
             self.count += 1
             return "LQRing"
