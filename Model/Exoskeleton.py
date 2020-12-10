@@ -28,7 +28,7 @@ class Exoskeleton(Model.Model):
 
     def __init__(self, client, model_name, joints, mass, height, human):
         super(Exoskeleton, self).__init__(client, model_name=model_name, joint_names=joints)
-        self._handle = self._client.get_obj_handle('Hip')
+        self._handle = self._client.get_obj_handle('ExoHip')
         # Update to current
 
         time.sleep(4)

@@ -1,4 +1,4 @@
-export AMBF_WALKER='pwd'
+echo "export AMBF_WALKER=$(pwd)" >> ~/.bashrc
 sudo apt install libeigen3-dev
 sudo apt install ros-melodic-smach
 pip3 install git+https://github.com/WPI-AIM/AIM_GaitAnalysisToolkit.git
