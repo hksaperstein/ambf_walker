@@ -1,3 +1,4 @@
+export AMBF_WALKER='pwd'
 sudo apt install libeigen3-dev
 sudo apt install ros-melodic-smach
 pip3 install git+https://github.com/WPI-AIM/AIM_GaitAnalysisToolkit.git
@@ -12,3 +13,5 @@ cd ..
 git clone https://github.com/WPI-AIM-Hybrid-Exoskeleton/rbdl-orb.git
 # shellcheck disable=SC2164
 cd rbdl-orb && sh setup.sh
+
+

@@ -16,7 +16,7 @@ from ambf_walker.srv import DesiredJointsCmdRequest, DesiredJointsCmd
 #from ilqr.dynamics import FiniteDiffDynamics
 from GaitAnaylsisToolkit.LearningTools.Runner import GMMRunner
 import numpy.polynomial.polynomial as poly
-
+from os.path import dirname, join
 
 class Initialize(smach.State):
 
@@ -413,7 +413,7 @@ class MPC2(smach.State):
             return "MPC2ed"
 
             pass
-"""
+
 class LQR(smach.State):
 
     def __init__(self, model, outcomes=["LQRing", "LQRed"]):
@@ -422,7 +422,8 @@ class LQR(smach.State):
         self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
         self._model = model
         self.rate = rospy.Rate(100)
-        file = "/home/nathanielgoldfarb/linearize_model/test.npy"
+        project_root = dirname(dirname(__file__))
+        file = join(project_root, 'config/tau.pickle')
         with open(file, 'rb') as f:
             self.us2 = np.load(f)
         self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
@@ -442,83 +443,6 @@ class LQR(smach.State):
         else:
             return "LQRed"
 
-
-class Temp(smach.State):
-
-    def __init__(self, model, outcomes=["Temping", "Temped"]):
-        smach.State.__init__(self, outcomes=outcomes)
-        rospy.wait_for_service('joint_cmd')
-        self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
-        self.runner = TPGMMRunner.TPGMMRunner("/home/nathanielgoldfarb/catkin_ws/src/ambf_walker/Train/gotozero.pickle")
-        self._model = model
-        self.runner = model.get_runner()
-        self.rate = rospy.Rate(1000)
-        #self.setup()
-
-    def setup(self):
-
-        J_hist = []
-
-        def on_iteration(iteration_count, xs, us, J_opt, accepted, converged):
-            J_hist.append(J_opt)
-            info = "converged" if converged else ("accepted" if accepted else "failed")
-            print("iteration", iteration_count, info, J_opt)
-
-        max_bounds = 8.0
-        min_bounds = -8.0
-        def f(x, u, i):
-            diff = (max_bounds - min_bounds) / 2.0
-            mean = (max_bounds + min_bounds) / 2.0
-            u = diff * np.tanh(u) + mean
-            y = Model.runge_integrator(self._model.get_rbdl_model(), x, 0.01, u)
-            return np.array(y)
-
-        dynamics = FiniteDiffDynamics(f, 12, 6)
-
-        x_path = []
-        u_path = []
-        count = 0
-        N = self.runner.get_length()
-        while count < self.runner.get_length():
-            count += 1
-            self.runner.step()
-            u_path.append(self.runner.ddx.flatten().tolist())
-            x = self.runner.x.flatten().tolist() + self.runner.dx.flatten().tolist()
-            x_path.append(x)
-
-        u_path = u_path[:-1]
-        expSigma = self.runner.get_expSigma()
-        size = expSigma[0].shape[0]
-        Q = [np.zeros((size * 2, size * 2))] * len(expSigma)
-        for ii in range(len(expSigma) - 2, -1, -1):
-            Q[ii][:size, :size] = np.linalg.pinv(expSigma[ii])
-
-        x0 = x_path[0]
-        x_path = np.array(x_path)
-        self.u_path = np.array(u_path)
-        R = 0.1 * np.eye(dynamics.action_size)
-        #
-        cost2 = PathQsRCost(Q, R, x_path=x_path, u_path=self.u_path)
-        #
-        # # Random initial action path.
-        ilqr2 = iLQR(dynamics, cost2, N - 1)
-
-        self.cntrl = RecedingHorizonController(x0, ilqr2)
-
-    def execute(self, userdata):
-        count = 0
-        for xs2, us2 in self.cntrl.control(self.u_path):
-            q = np.array([0.0]*7)
-            qd = np.array([0.0]*7)
-            qdd = np.append(us2, [0.0])
-            print(qdd)
-            self.send(q, qd, qdd, "Temp", [count])
-            self.rate.sleep()
-            count += 1
-            print(count)
-
-
-
 class StairDMP(smach.State):
 
     def __init__(self, model,outcomes=["stairing", "staired"]):
@@ -526,8 +450,11 @@ class StairDMP(smach.State):
         rospy.wait_for_service('joint_cmd')
         self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
         self._model = model
-        self.runnerZ = GMMRunner.GMMRunner("/home/nathanielgoldfarb/stair_traj_learning/Main/toeZ_all.pickle")  # make_toeZ([file1, file2], hills3, nb_states, "toe_IK")
-        self.runnerY = GMMRunner.GMMRunner("/home/nathanielgoldfarb/stair_traj_learning/Main/toeY_all.pickle")  # make_toeY([file1, file2], hills3, nb_states, "toe_IK")
+        project_root = dirname(dirname(__file__))
+        fileZ = join(project_root, 'config/toeZ_all.pickle')
+        fileY = join(project_root, 'config/toeY_all.pickle')
+        self.runnerZ = GMMRunner.GMMRunner(fileZ)  # make_toeZ([file1, file2], hills3, nb_states, "toe_IK")
+        self.runnerY = GMMRunner.GMMRunner(fileY)  # make_toeY([file1, file2], hills3, nb_states, "toe_IK")
         self.rate = rospy.Rate(10)
         self.msg = DesiredJoints()
         self.pub = rospy.Publisher("set_points", DesiredJoints, queue_size=1)
@@ -671,4 +598,3 @@ class StairDMP(smach.State):
             plt.show()
             return "staired"
 
-"""

@@ -20,6 +20,8 @@ from ambf_msgs.msg import RigidBodyState, SensorState
 from GaitAnaylsisToolkit.LearningTools.Runner import TPGMMRunner
 from geometry_msgs.msg import Point32
 from sensor_msgs.msg import PointCloud
+from os.path import dirname, join
+
 
 
 class Exoskeleton(Model.Model):
@@ -355,10 +357,14 @@ class Exoskeleton(Model.Model):
         return hip, knee, ankle
 
     def get_runner(self):
-        return TPGMMRunner.TPGMMRunner("/home/hksaperstein/WPI/thesis/git/catkin_ws/src/ambf_walker/config/gotozero.pickle")
+        project_root = dirname(dirname(__file__))
+        config_path = join(project_root, 'config/gotozero.pickle')
+        return TPGMMRunner.TPGMMRunner(config_path)
 
     def get_walker(self):
-        return TPGMMRunner.TPGMMRunner("/home/hksaperstein/WPI/thesis/git/catkin_ws/src/ambf_walker/config/walk2.pickle")
+        project_root = dirname(dirname(__file__))
+        config_path = join(project_root, 'config/walk2.pickle')
+        return TPGMMRunner.TPGMMRunner(config_path)
 
     def linearize(self):
         pass
