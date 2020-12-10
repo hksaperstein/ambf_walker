@@ -1,6 +1,6 @@
 .idea*
 *.pyc
 /venv/*
-**/*.STL
+#**/*.STL
 
 lib/GaitAnalysisToolkit
