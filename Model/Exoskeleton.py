@@ -351,8 +351,8 @@ class Exoskeleton(Model.Model):
         return fk
 
     def stance_trajectory(self, tf=2, dt=0.01):
-        hip = Model.get_traj(0.0, -0.2, 0.0, 0.0, tf, dt)
-        knee = Model.get_traj(0.0, 0.20, 0.0, 0., tf, dt)
+        hip = Model.get_traj(0.0, -0.5, 0.0, 0.0, tf, dt)
+        knee = Model.get_traj(0.0, 0.50, 0.0, 0., tf, dt)
         ankle = Model.get_traj(-0.349, -0.2, 0.0, 0.0, tf, dt)
         return hip, knee, ankle
 
