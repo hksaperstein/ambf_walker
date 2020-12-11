@@ -9,7 +9,7 @@ from Controller import ControllerNode
 from Model import Exoskeleton
 import rospy
 from ambf_client import Client
-from Controller import DynController
+from Controller import DynController,FeedForwardController
 
 Kp = np.zeros((7, 7))
 Kd = np.zeros((7, 7))
@@ -60,7 +60,9 @@ Dyn = DynController.DynController(LARRE, Kp, Kd)
 #                "LQR":lqr}
 
 # lqr = LQRController.LQRController(LARRE, LARRE.get_runner())
-controllers = {'Dyn': Dyn}
+FF = FeedForwardController.FeedForwardController(LARRE, Kp, Kd)
+controllers = {'Dyn': Dyn,
+               "FF": FF}
 
 cnrl = ControllerNode.ControllerNode(LARRE, controllers)
 

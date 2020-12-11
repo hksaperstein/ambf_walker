@@ -2,7 +2,6 @@
 This should be moved to a separate repo later
 """
 
-
 import abc
 import numpy as np
 import rbdl
@@ -113,7 +112,7 @@ class Exoskeleton(Model.Model):
     def right_foot_prox_callback(self, msg):
         self._right_foot_prox = msg
 
-    def check_foot_collision(self):
+    def check_left_foot_collision(self):
         return any(self._left_foot_prox.triggered)
 
     def check_foot_collision(self):

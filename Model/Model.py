@@ -1,9 +1,9 @@
 import abc
 import numpy as np
 import rbdl
-
 import time
 import rospy
+from Filters import LowPass, MeanFilter
 from threading import Thread
 from GaitCore.Bio import Joint, Leg
 from GaitCore.Core import Point
@@ -27,6 +27,8 @@ class Model(object):
         self._selected_joint_names = joint_names
         self._updater = Thread(target=self.update)
         self._enable_control = False
+        self.qd_filter = MeanFilter.MeanFilter(1)
+        self.q_filter = MeanFilter.MeanFilter(1)
         self.sub_torque = rospy.Subscriber(self.model_name + "_joint_torque", JointState, self.torque_cb)
         self.q_pub = rospy.Publisher(self.model_name + "_q", Float32MultiArray, queue_size=1)
 
@@ -87,7 +89,7 @@ self.rbdl_model = self.dynamic_model()
         for joint in self._selected_joint_names:
             if joint in self._joints_names:
                 my_joints.append(value[self._joints_names.index(joint)])
-        self._q = np.asarray(my_joints)
+        self._q = self.q_filter.update(np.asarray(my_joints))
 
     @property
     def qd(self):
@@ -100,7 +102,7 @@ self.rbdl_model = self.dynamic_model()
         for joint in self._selected_joint_names:
             if joint in self._joints_names:
                 my_joints.append(value[self._joints_names.index(joint)])
-        self._qd = np.asarray(my_joints)
+        self._qd = self.qd_filter.update(np.asarray(my_joints))
 
     @property
     def state(self):
