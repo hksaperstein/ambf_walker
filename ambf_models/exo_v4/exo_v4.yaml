@@ -2132,30 +2132,44 @@ JOINT ExoHipCrutches:
   name: ExoHipCrutches
   parent: BODY ExoHip
   child: BODY Crutches
-  parent axis:
-    x: 0.0
-    y: 0.0
-    z: 1.0
-  parent pivot:
-    x: -0.1227
-    y: -0.1536
-    z: -0.1441
-  child axis:
-    x: 0.0
-    y: -0.5
-    z: 0.866
-  child pivot:
-    x: -0.1229
-    y: 0.387
-    z: 0.54
-  joint limits:
-    high: 1.2
-    low: -1.2
-  enable feedback: false
-  passive: true
+  parent axis: {x: 0.0, y: 0.0, z: 1.0}
+  parent pivot: {x: 0.0, y: 0.0, z: 0.0}
+  child axis: {x: 0.0, y: -0.5, z: 0.866}
+  child pivot: {x: -0.0, y: 0.7529, z: 0.921}
+  joint limits: {high: 0.3, low: 0.0}
+  controller: {P: 1000, I: 0, D: 1}
   detached: true
-  type: fixed
-  damping: 0.0
+  type: prismatic
+  damping: 0.5
+JOINT RobLeftThigh-RobLeftShank:
+  name: RobLeftThigh-RobLeftShank
+  parent: BODY RobLeftThigh
+  child: BODY RobLeftShank
+  parent axis:
+    x: 1.0
+    y: 0.0
+    z: 0.0
+  parent pivot:
+    x: -0.003
+    y: 0.0012
+    z: -0.3038
+  child axis:
+    x: 1.0
+    y: 0.0
+    z: 0.0
+  child pivot:
+    x: -0.027
+    y: -0.0014
+    z: 0.2552
+  joint limits:
+    high: 1.92
+    low: 0.0
+  enable feedback: true
+  passive: false
+  detached: true
+  type: revolute
+  max motor impulse: 0.05000000074505806
+  damping: 0.5
 JOINT ExoLeftKnee:
   name: ExoLeftKnee
   parent: BODY ExoLeftThigh
