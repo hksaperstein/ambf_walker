@@ -73,14 +73,14 @@ _client = Client()
 _client.connect()
 rate = rospy.Rate(1000)
 
-joints = ['Hip-RobLeftThigh', 'RobLeftThigh-RobLeftShank', 'RobLeftShank-RobLeftFoot',
-          'Hip-RobRightThigh', 'RobRightThigh-RobRightShank', 'RobRightShank-RobRightFoot',  'Hip-Crutches']
+robot_joints = ['ExoLeftHip', 'ExoLeftKnee', 'ExoLeftAnkle',
+                'ExoRightHip', 'ExoRightKnee', 'ExoRightAnkle',  'ExoHipCrutches']
 
 
 #joints = ['Hip-Leftthigh', 'Leftthigh-Leftshank', 'Leftshank-Leftfoot', 'Hip-Rightthigh', 'Rightthigh-Rightshank', 'Rightshank-Rightfoot', 'Hip-Cylinder']
 
 
-LARRE = Exoskeleton.Exoskeleton(_client, joints, 56, 1.56)
+LARRE = Exoskeleton.Exoskeleton(_client, robot_joints, 56, 1.56)
 Dyn = DynController.DynController(LARRE, Kp_Dyn, Kd_Dyn)
 
 
