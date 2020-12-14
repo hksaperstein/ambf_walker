@@ -19,14 +19,14 @@ from Controller import DynController, MPCController, FeedForwardController ,LQRC
 Kp_Dyn = np.zeros((7, 7))
 Kd_Dyn = np.zeros((7, 7))
 #
-Kp_hip = 100.0
+Kp_hip = 250.0
 Kd_hip = 0.5
 
-Kp_knee = 100.0
-Kd_knee = 1.0
+Kp_knee = 50.0
+Kd_knee = 0.5
 
-Kp_ankle = 110.0
-Kd_ankle = 0.4
+Kp_ankle = 250.0
+Kd_ankle = 0.8
 
 Kp_Dyn[0, 0] = Kp_hip
 Kd_Dyn[0, 0] = Kd_hip
@@ -79,8 +79,7 @@ robot_joints = ['ExoLeftHip', 'ExoLeftKnee', 'ExoLeftAnkle',
 
 #joints = ['Hip-Leftthigh', 'Leftthigh-Leftshank', 'Leftshank-Leftfoot', 'Hip-Rightthigh', 'Rightthigh-Rightshank', 'Rightshank-Rightfoot', 'Hip-Cylinder']
 
-
-LARRE = Exoskeleton.Exoskeleton(_client, robot_joints, 56, 1.56)
+LARRE = Exoskeleton.Exoskeleton(_client, "exo", robot_joints, 56, 1.56)
 Dyn = DynController.DynController(LARRE, Kp_Dyn, Kd_Dyn)
 
 
