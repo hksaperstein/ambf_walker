@@ -30,7 +30,7 @@ class Initialize(smach.State):
         self.rate = rospy.Rate(100)
         tf = 2.0
         dt = 0.01
-        self.hip, self.knee, self.ankle = self._model.stance_trajectory(tf=tf, dt=dt)
+        self.hip, self.knee, self.ankle = self._model.walk_init_trajectory(tf=tf, dt=dt) #stance_trajectory(tf=tf, dt=dt)
         self.msg = DesiredJoints()
         self.pub = rospy.Publisher(self._model.model_name + "_set_points", DesiredJoints, queue_size=1)
 
