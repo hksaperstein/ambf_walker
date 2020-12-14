@@ -67,6 +67,7 @@ joints:
 - JOINT SensorRightFoot3-SensorRightFoot3Base
 - JOINT SensorRightFoot3Base-SensorRightFoot3Tab
 - JOINT RobRightFoot-SensorRightFoot3Leg
+sensors: [SENSOR RightFootProx, SENSOR LeftFootProx, SENSOR RightSideProx, SENSOR LeftSideProx]
 high resolution path: ./high_res/
 low resolution path: ./low_res/
 ignore inter-collision: false
@@ -3034,3 +3035,29 @@ JOINT RobRightFoot-SensorRightFoot3Leg:
   detached: true
   type: fixed
   damping: 0.0
+
+SENSOR RightFootProx:
+  name: RightFootProx
+  type: Proximity
+  location:
+    orientation: {p: 0.0, r: 0.0, y: 0.0}
+    position: {x: 0.08, y: -0.3, z: -0.02}
+  array:
+    - offset: {x: 0.1, y: 0.2, z: -0.01}
+      direction: {x: 0.0, y: -0.1, z: 0.0}
+  range: 0.15
+  parent: /ambf/env/BODY ExoRightFoot
+  visible: True
+
+SENSOR LeftFootProx:
+  name: LeftFootProx
+  type: Proximity
+  location:
+    orientation: {p: 0.0, r: 0.0, y: 0.0}
+    position: {x: -0.08, y: -0.3, z: -0.02}
+  array:
+    - offset: {x: -0.1, y: 0.2, z: -0.01}
+      direction: {x: 0.0, y: -0.1, z: 0.0}
+  range: 0.15
+  parent: /ambf/env/BODY ExoLeftFoot
+  visible: True
