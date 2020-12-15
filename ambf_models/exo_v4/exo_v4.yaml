@@ -36,13 +36,13 @@ bodies:
 - BODY SensorRightFoot3Tab
 - BODY SensorRightFoot3Leg
 joints:
-- JOINT ExoHipCrutches
+- JOINT ExoLeftHip
 - JOINT ExoLeftKnee
 - JOINT ExoLeftAnkle
-- JOINT ExoLeftHip
+- JOINT ExoRightHip
 - JOINT ExoRightKnee
 - JOINT ExoRightAnkle
-- JOINT ExoRightHip
+- JOINT ExoHipCrutches
 - JOINT SensorLeftFoot1-SensorLeftFoot1Leg
 - JOINT SensorLeftFoot1-SensorLeftFoot1Base
 - JOINT SensorLeftFoot1Base-SensorLeftFoot1Tab
@@ -75,7 +75,7 @@ namespace: /ambf/env/
 BODY Crutches:
   name: Crutches
   mesh: Crutches.STL
-  mass: 1.0
+  mass: 4.0
   collision margin: 0.001
   scale: 1.0
   location:
@@ -170,7 +170,7 @@ BODY Crutches:
 BODY ExoHip:
   name: ExoHip
   mesh: ExoHip.STL
-  mass: 5.0
+  mass: 2.33
   collision margin: 0.001
   scale: 1.0
   location:
@@ -620,7 +620,7 @@ BODY ExoRightFoot:
 BODY SensorLeftFoot1:
   name: SensorLeftFoot1
   mesh: SensorLeftFoot1.STL
-  mass: 1.0
+  mass:  0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -683,7 +683,7 @@ BODY SensorLeftFoot1:
 BODY SensorLeftFoot1Base:
   name: SensorLeftFoot1Base
   mesh: SensorLeftFoot1Base.STL
-  mass: 0.1
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -746,7 +746,7 @@ BODY SensorLeftFoot1Base:
 BODY SensorLeftFoot1Tab:
   name: SensorLeftFoot1Tab
   mesh: SensorLeftFoot1Tab.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -809,7 +809,7 @@ BODY SensorLeftFoot1Tab:
 BODY SensorLeftFoot1Leg:
   name: SensorLeftFoot1Leg
   mesh: SensorLeftFoot1Leg.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -872,7 +872,7 @@ BODY SensorLeftFoot1Leg:
 BODY SensorLeftFoot2:
   name: SensorLeftFoot2
   mesh: SensorLeftFoot2.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -935,7 +935,7 @@ BODY SensorLeftFoot2:
 BODY SensorLeftFoot2Base:
   name: SensorLeftFoot2Base
   mesh: SensorLeftFoot2Base.STL
-  mass: 0.1
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -998,7 +998,7 @@ BODY SensorLeftFoot2Base:
 BODY SensorLeftFoot2Tab:
   name: SensorLeftFoot2Tab
   mesh: SensorLeftFoot2Tab.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1061,7 +1061,7 @@ BODY SensorLeftFoot2Tab:
 BODY SensorLeftFoot2Leg:
   name: SensorLeftFoot2Leg
   mesh: SensorLeftFoot2Leg.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1124,7 +1124,7 @@ BODY SensorLeftFoot2Leg:
 BODY SensorRightFoot2:
   name: SensorRightFoot2
   mesh: SensorRightFoot2.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1187,7 +1187,7 @@ BODY SensorRightFoot2:
 BODY SensorRightFoot2Base:
   name: SensorRightFoot2Base
   mesh: SensorRightFoot2Base.STL
-  mass: 0.1
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1250,7 +1250,7 @@ BODY SensorRightFoot2Base:
 BODY SensorRightFoot2Tab:
   name: SensorRightFoot2Tab
   mesh: SensorRightFoot2Tab.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1313,7 +1313,7 @@ BODY SensorRightFoot2Tab:
 BODY SensorRightFoot2Leg:
   name: SensorRightFoot2Leg
   mesh: SensorRightFoot2Leg.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1376,7 +1376,7 @@ BODY SensorRightFoot2Leg:
 BODY SensorRightFoot1:
   name: SensorRightFoot1
   mesh: SensorRightFoot1.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1439,7 +1439,7 @@ BODY SensorRightFoot1:
 BODY SensorRightFoot1Base:
   name: SensorRightFoot1Base
   mesh: SensorRightFoot1Base.STL
-  mass: 0.1
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1502,7 +1502,7 @@ BODY SensorRightFoot1Base:
 BODY SensorRightFoot1Tab:
   name: SensorRightFoot1Tab
   mesh: SensorRightFoot1Tab.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1565,7 +1565,7 @@ BODY SensorRightFoot1Tab:
 BODY SensorRightFoot1Leg:
   name: SensorRightFoot1Leg
   mesh: SensorRightFoot1Leg.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1628,7 +1628,7 @@ BODY SensorRightFoot1Leg:
 BODY SensorLeftFoot3:
   name: SensorLeftFoot3
   mesh: SensorLeftFoot3.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1691,7 +1691,7 @@ BODY SensorLeftFoot3:
 BODY SensorLeftFoot3Base_001:
   name: SensorLeftFoot3Base_001
   mesh: SensorLeftFoot3Base_001.STL
-  mass: 0.1
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1754,7 +1754,7 @@ BODY SensorLeftFoot3Base_001:
 BODY SensorLeftFoot3Tab:
   name: SensorLeftFoot3Tab
   mesh: SensorLeftFoot3Tab.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1817,7 +1817,7 @@ BODY SensorLeftFoot3Tab:
 BODY SensorLeftFoot3Leg:
   name: SensorLeftFoot3Leg
   mesh: SensorLeftFoot3Leg.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1880,7 +1880,7 @@ BODY SensorLeftFoot3Leg:
 BODY SensorRightFoot3:
   name: SensorRightFoot3
   mesh: SensorRightFoot3.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -1943,7 +1943,7 @@ BODY SensorRightFoot3:
 BODY SensorRightFoot3Base:
   name: SensorRightFoot3Base
   mesh: SensorRightFoot3Base.STL
-  mass: 0.1
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -2006,7 +2006,7 @@ BODY SensorRightFoot3Base:
 BODY SensorRightFoot3Tab:
   name: SensorRightFoot3Tab
   mesh: SensorRightFoot3Tab.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -2069,7 +2069,7 @@ BODY SensorRightFoot3Tab:
 BODY SensorRightFoot3Leg:
   name: SensorRightFoot3Leg
   mesh: SensorRightFoot3Leg.STL
-  mass: 1.0
+  mass: 0.00001
   collision margin: 0.001
   scale: 1.0
   location:
@@ -2141,35 +2141,6 @@ JOINT ExoHipCrutches:
   controller: {P: 1000, I: 0, D: 1}
   detached: true
   type: prismatic
-  damping: 0.5
-JOINT RobLeftThigh-RobLeftShank:
-  name: RobLeftThigh-RobLeftShank
-  parent: BODY RobLeftThigh
-  child: BODY RobLeftShank
-  parent axis:
-    x: 1.0
-    y: 0.0
-    z: 0.0
-  parent pivot:
-    x: -0.003
-    y: 0.0012
-    z: -0.3038
-  child axis:
-    x: 1.0
-    y: 0.0
-    z: 0.0
-  child pivot:
-    x: -0.027
-    y: -0.0014
-    z: 0.2552
-  joint limits:
-    high: 1.92
-    low: 0.0
-  enable feedback: true
-  passive: false
-  detached: true
-  type: revolute
-  max motor impulse: 0.05000000074505806
   damping: 0.5
 JOINT ExoLeftKnee:
   name: ExoLeftKnee
