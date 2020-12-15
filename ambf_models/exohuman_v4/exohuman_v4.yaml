@@ -5357,8 +5357,8 @@ JOINT ExoHipCrutches:
   joint limits:
     high: 1.2
     low: -1.2
-  enable feedback: false
-  passive: true
+  enable feedback: true
+  passive: false
   detached: true
   type: fixed
   damping: 0.0
