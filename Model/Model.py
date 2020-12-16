@@ -136,9 +136,6 @@ self.rbdl_model = self.dynamic_model()
                 for joint in self._selected_joint_names:
                     if joint in self._joints_names:
                         joints_idx.append(self._joints_names.index(joint))
-                        # print(self._joints_names[self._joints_names.index(joint)], end=' ')
-                # print(joints_idx)
-
                 self.handle.set_multiple_joint_effort(self.tau, joints_idx)
                 #set multiple joint pos
             rate.sleep()

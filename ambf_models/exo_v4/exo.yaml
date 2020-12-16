@@ -3268,7 +3268,7 @@ SENSOR RightSideProx:
     - offset: {x: 0.0, y: 0.0, z: 0.0}
       direction: {x: 0.0, y: -0.588,z: -0.809}
   range: 1.5
-  parent: /ambf/env/BODY Hip
+  parent: /ambf/env/BODY RobHip
   visible: False
 
 
@@ -3504,5 +3504,5 @@ SENSOR LeftSideProx:
     - offset: {x: 0.0, y: 0.0, z: 0.0}
       direction: {x: 0.0, y: -0.588,z: -0.809}
   range: 1.5
-  parent: /ambf/env/BODY Hip
+  parent: /ambf/env/BODY RobHip
   visible: False

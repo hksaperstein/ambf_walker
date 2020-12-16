@@ -29,7 +29,9 @@ class Exoskeleton(Model.Model):
         super(Exoskeleton, self).__init__(client, model_name=model_name, joint_names=joints)
         self._handle = self._client.get_obj_handle('ExoHip')
         # Update to current
-
+        self.prox = {}
+        self.prox["LeftSideProx"] = rospy.Publisher('left_leg', PointCloud, queue_size=10)
+        self.prox["RightSideProx"] = rospy.Publisher('right_leg', PointCloud, queue_size=10)
         time.sleep(4)
         self._mass = mass
         self._height = height
