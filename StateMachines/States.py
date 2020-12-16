@@ -255,7 +255,7 @@ class Walk(smach.State):
             self.count = 0
             self.runner.reset()
             # can torques be released?
-            return "walked"
+            return "walking"
 
 class Listening(smach.State):
 
