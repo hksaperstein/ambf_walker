@@ -45,7 +45,7 @@ body_joints = ['HumanLeftHip', 'HumanLeftKnee', 'HumanLeftAnkle',
                'HumanRightHip', 'HumanRightKnee', 'HumanRightAnkle']
 
 robot_joints = ['ExoLeftHip', 'ExoLeftKnee', 'ExoLeftAnkle', 'ExoRightHip', 'ExoRightKnee', 'ExoRightAnkle', 'ExoHipCrutches']
-# LARRY = Human.Human(_client, "human", body_joints, 0, 0)
+LARRY = Human.Human(_client, "human", body_joints, 0, 0)
 LARRE = Exoskeleton.Exoskeleton(_client, "exo", robot_joints, 56, 1.56)
 # LARRE.handle.set_rpy(0.25, 0, 0)
 # LARRE.handle.set_pos(0, 0, 1.0)
