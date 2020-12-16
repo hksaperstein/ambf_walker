@@ -219,17 +219,26 @@ class Walk(smach.State):
         self.msg = DesiredJoints()
         self.pub = rospy.Publisher(self._model.model_name + "_set_points", DesiredJoints, queue_size=1)
         self.count = 0
+        self.execute_start = True
+        self.last_x = []
 
     def execute(self, userdata):
 
         count = self.count
 
-        if count == 0:
+        if self.execute_start and count == 0:
+            self.execute_start = False
             start = []
             for q in self._model.q[0:6]:
                 start.append(np.array([q]))
-
             self.runner.update_start(start)
+        elif count == 0:
+            start = []
+            for q in self.last_x:
+                start.append(np.array([q[0]]))
+            self.runner.update_start(start)
+
+
         # print(self.runner.get_length())
         if count < self.runner.get_length():
 
@@ -250,9 +259,11 @@ class Walk(smach.State):
             self.count += 1
             # print(count)
             self.rate.sleep()
+            self.last_x = x
             return "walking"
         else:
             self.count = 0
+
             self.runner.reset()
             # can torques be released?
             return "walking"
