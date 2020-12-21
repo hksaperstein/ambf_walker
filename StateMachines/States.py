@@ -249,7 +249,8 @@ class Walk(smach.State):
             q = np.append(x, [0.0])
             qd = np.append(dx, [0.0])
             qdd = np.append(ddx, [0.0])
-            self._model.handle.set_multiple_joint_pos(q, [3, 1, 2, 0, 4, 5, 6])
+
+            self._model.handle.set_multiple_joint_pos(q, [3, 1, 2, 6, 4, 5, 0])
             self.msg.q = q
             self.msg.qd = qd
             self.msg.qdd = qdd

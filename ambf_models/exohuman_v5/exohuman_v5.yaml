@@ -5565,6 +5565,10 @@ JOINT ExoLeftHip:
     low: -1.92
   enable feedback: true
   passive: false
+  controller:
+    P: 0.0
+    I: 0.0
+    D: 100.0
   detached: true
   type: revolute
   max motor impulse: 0.05000000074505806
@@ -5661,6 +5665,10 @@ JOINT ExoRightHip:
   enable feedback: true
   passive: false
   detached: true
+  controller:
+    P: 50000.0
+    I: 0.0
+    D: 0.0
   type: revolute
   max motor impulse: 0.05000000074505806
   damping: 0.5
