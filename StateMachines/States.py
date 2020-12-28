@@ -39,7 +39,7 @@ class Initialize(smach.State):
 
     def execute(self, userdata):
 
-        self._model.handle.set_rpy(0.25, 0, 0)
+        self._model.handle.set_rpy(0.0, 0, 0)
         self._model.handle.set_pos(0.0, 0, 1.0)
 
         if self.count <= self.total - 1:
@@ -216,14 +216,22 @@ class Walk(smach.State):
         self._model = model
         self.runner = self._model.get_walker()
         self.rate = rospy.Rate(10)
-        self.msg = DesiredJoints()
-        self.pub = rospy.Publisher(self._model.model_name + "_set_points", DesiredJoints, queue_size=1)
+        self.set_msg = DesiredJoints()
+        self.error_msg = DesiredJoints()
+        self.set_pub = rospy.Publisher(self._model.model_name + "_set_points", DesiredJoints, queue_size=1)
+        self.error_pub = rospy.Publisher(self._model.model_name + "_error", DesiredJoints, queue_size=1)
+        self.state_pub = rospy.Publisher("state", String, queue_size=1)
+        self.restart_sub = rospy.Subscriber("restart", String, self.restart_cb)
+        self.start = ""
         self.count = 0
+        self.num_cycles = 0
         self.execute_start = True
         self.last_x = []
 
-    def execute(self, userdata):
+    def restart_cb(self, msg):
+        self.num_cycles = 0
 
+    def execute(self, userdata):
         count = self.count
 
         if self.execute_start and count == 0:
@@ -241,7 +249,8 @@ class Walk(smach.State):
 
         # print(self.runner.get_length())
         if count < self.runner.get_length():
-
+            if self.num_cycles == 3:
+                self.state_pub.publish("walking")
             self.runner.step()
             x = self.runner.x
             dx = self.runner.dx
@@ -249,23 +258,35 @@ class Walk(smach.State):
             q = np.append(x, [0.0])
             qd = np.append(dx, [0.0])
             qdd = np.append(ddx, [0.0])
-            self._model.handle.set_multiple_joint_pos(q, [3, 1, 2, 6, 4, 5, 0])
-            self.msg.q = q
-            self.msg.qd = qd
-            self.msg.qdd = qdd
-            self.msg.controller = "Dyn"
-            self.pub.publish(self.msg)
-            # self.send(q, qd, qdd,"Dyn",[])
+            # self._model.handle.set_multiple_joint_pos(q, [3, 1, 2, 6, 4, 5, 0])
+            self.set_msg.q = q
+            self.set_msg.qd = qd
+            self.set_msg.qdd = qdd
+            self.set_msg.controller = "Dyn"
+            self.set_pub.publish(self.set_msg)
+            self.error_msg.q = q - self._model.q
+            self.error_msg.qd = qd
+            self.error_msg.qdd = qdd
+            self.error_msg.controller = "Dyn"
+            self.error_pub.publish(self.error_msg)
+            self.send(q, qd, qdd, "Dyn", [])
             self.count += 1
             # print(count)
             self.rate.sleep()
             self.last_x = x
+            # self.state_pub.publish("walking")
             return "walking"
         else:
             self.count = 0
-
+            if self.num_cycles == 3:
+                self.state_pub.publish("walked")
+                self.num_cycles = 0
+            else:
+                self.num_cycles += 1
             self.runner.reset()
             # can torques be released?
+            # if self.num_cycles == 5:
+            #     self.state_pub.publish("walked")
             return "walking"
 
 class Listening(smach.State):

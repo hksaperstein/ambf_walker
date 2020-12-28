@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root version="2.3.8">
+ <tabbed_widget parent="main_window" name="Main Window">
+  <plotmatrix rows="3" tab_name="plot" columns="2">
+   <plot col="0" row="0" style="Lines">
+    <range left="1576.739918" bottom="-0.331772" top="0.555646" right="1606.838756"/>
+    <limitY/>
+    <curve R="255" custom_transform="noTransform" G="0" B="26" name="/exo_error/q.0"/>
+    <curve R="0" custom_transform="noTransform" G="255" B="18" name="/exo_q/data.0"/>
+    <curve R="13" custom_transform="noTransform" G="0" B="255" name="/exo_set_points/q.0"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="0" row="1" style="Lines">
+    <range left="1576.739918" bottom="-0.031970" top="1.307964" right="1606.838756"/>
+    <limitY/>
+    <curve R="255" custom_transform="noTransform" G="0" B="10" name="/exo_error/q.1"/>
+    <curve R="0" custom_transform="noTransform" G="255" B="21" name="/exo_q/data.1"/>
+    <curve R="36" custom_transform="noTransform" G="8" B="236" name="/exo_set_points/q.1"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="0" row="2" style="Lines">
+    <range left="1576.739918" bottom="-0.350199" top="0.366307" right="1606.838756"/>
+    <limitY/>
+    <curve R="214" custom_transform="noTransform" G="39" B="40" name="/exo_error/q.2"/>
+    <curve R="26" custom_transform="noTransform" G="201" B="56" name="/exo_q/data.2"/>
+    <curve R="14" custom_transform="noTransform" G="0" B="255" name="/exo_set_points/q.2"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="1" row="0" style="Lines">
+    <range left="1576.739918" bottom="-0.448760" top="0.423860" right="1606.838756"/>
+    <limitY/>
+    <curve R="214" custom_transform="noTransform" G="39" B="40" name="/exo_error/q.3"/>
+    <curve R="26" custom_transform="noTransform" G="201" B="56" name="/exo_q/data.3"/>
+    <curve R="31" custom_transform="noTransform" G="119" B="180" name="/exo_set_points/q.3"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="1" row="1" style="Lines">
+    <range left="1576.739918" bottom="-0.033778" top="1.371891" right="1606.838756"/>
+    <limitY/>
+    <curve R="255" custom_transform="noTransform" G="0" B="0" name="/exo_error/q.4"/>
+    <curve R="0" custom_transform="noTransform" G="255" B="23" name="/exo_q/data.4"/>
+    <curve R="0" custom_transform="noTransform" G="1" B="255" name="/exo_set_points/q.4"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="1" row="2" style="Lines">
+    <range left="1576.739918" bottom="-0.335955" top="0.375264" right="1606.838756"/>
+    <limitY/>
+    <curve R="255" custom_transform="noTransform" G="0" B="35" name="/exo_error/q.5"/>
+    <curve R="0" custom_transform="noTransform" G="255" B="10" name="/exo_q/data.5"/>
+    <curve R="29" custom_transform="noTransform" G="0" B="255" name="/exo_set_points/q.5"/>
+    <transform value="noTransform"/>
+   </plot>
+  </plotmatrix>
+  <plotmatrix rows="3" tab_name="plot" columns="2">
+   <plot col="0" row="0" style="Lines">
+    <range left="0.000000" bottom="-0.100000" top="0.100000" right="0.000000"/>
+    <limitY/>
+    <curve R="23" custom_transform="noTransform" G="190" B="207" name="/exo_error/q.0"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="0" row="1" style="Lines">
+    <range left="0.000000" bottom="-0.100000" top="0.100000" right="0.000000"/>
+    <limitY/>
+    <curve R="188" custom_transform="noTransform" G="189" B="34" name="/exo_error/q.1"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="0" row="2" style="Lines">
+    <range left="0.000000" bottom="-0.100000" top="0.100000" right="0.000000"/>
+    <limitY/>
+    <curve R="31" custom_transform="noTransform" G="119" B="180" name="/exo_error/q.2"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="1" row="0" style="Lines">
+    <range left="0.000000" bottom="-0.100000" top="0.100000" right="0.000000"/>
+    <limitY/>
+    <curve R="214" custom_transform="noTransform" G="39" B="40" name="/exo_error/q.3"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="1" row="1" style="Lines">
+    <range left="0.000000" bottom="-0.100000" top="0.100000" right="0.000000"/>
+    <limitY/>
+    <curve R="255" custom_transform="noTransform" G="127" B="14" name="/exo_error/q.4"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot col="1" row="2" style="Lines">
+    <range left="0.000000" bottom="-0.100000" top="0.100000" right="0.000000"/>
+    <limitY/>
+    <curve R="241" custom_transform="noTransform" G="76" B="193" name="/exo_error/q.5"/>
+    <transform value="noTransform"/>
+   </plot>
+  </plotmatrix>
+  <currentPlotMatrix index="0"/>
+ </tabbed_widget>
+ <use_relative_time_offset enabled="1"/>
+ <!-- - - - - - - - - - - - - - - -->
+ <!-- - - - - - - - - - - - - - - -->
+ <Plugins>
+  <plugin ID="DataLoad CSV">
+   <default time_axis=""/>
+  </plugin>
+  <plugin ID="DataLoad ROS bags">
+   <use_header_stamp value="false"/>
+   <use_renaming_rules value="true"/>
+   <discard_large_arrays value="true"/>
+   <max_array_size value="100"/>
+  </plugin>
+  <plugin ID="DataLoad ULog"/>
+  <plugin ID="ROS Topic Subscriber">
+   <use_header_stamp value="false"/>
+   <use_renaming_rules value="true"/>
+   <discard_large_arrays value="true"/>
+   <max_array_size value="100"/>
+  </plugin>
+  <plugin ID="ROS /rosout Visualization" status="idle"/>
+  <plugin ID="ROS Topic Re-Publisher" status="idle"/>
+ </Plugins>
+ <!-- - - - - - - - - - - - - - - -->
+ <previouslyLoaded_Datafiles/>
+ <previouslyLoaded_Streamer name="ROS Topic Subscriber"/>
+ <!-- - - - - - - - - - - - - - - -->
+ <customMathEquations/>
+ <snippets>
+  <snippet language="JS" name="1st_derivative">
+   <global>var prevX = 0
+var prevY = 0</global>
+   <equation>dx = time - prevX
+dy = value - prevY
+prevX = time
+prevY = value
+
+return dy/dx</equation>
+  </snippet>
+  <snippet language="JS" name="1st_order_lowpass">
+   <global>var prevY = 0
+var alpha = 0.1</global>
+   <equation>prevY = alpha * value + (1.-alpha) * prevY
+
+return prevY</equation>
+  </snippet>
+  <snippet language="JS" name="2D_velocity">
+   <global>var prev_x = 0
+var prev_y = 0
+var prev_t = 0</global>
+   <equation>X = $$your_odometry/position/x$$
+Y = $$your_odometry/position/y$$
+
+var dist = sqrt( (X-prev_x)*(X-prev_x) + (Y-prev_y)*(Y-prev_y) )
+var dT = time - prev_t
+
+prev_x = X
+prev_y = Y
+prev_t = time
+
+return dist / dT</equation>
+  </snippet>
+  <snippet language="JS" name="average_two_curves">
+   <global></global>
+   <equation>a = $$PLOT_A$$
+b = $$PLOT_B$$
+
+return (a+b)/2</equation>
+  </snippet>
+  <snippet language="JS" name="integral">
+   <global>var integral = 0</global>
+   <equation>integral += value
+return integral</equation>
+  </snippet>
+  <snippet language="JS" name="rad_to_deg">
+   <global></global>
+   <equation>return value*180/3.1417</equation>
+  </snippet>
+  <snippet language="JS" name="remove_offset">
+   <global>var is_first = true
+var first_value = 0</global>
+   <equation>if (is_first)
+{
+  is_first = false
+  first_value = value
+}
+
+return value - first_value</equation>
+  </snippet>
+  <snippet language="JS" name="yaw_from_quaternion">
+   <global>// source: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+
+function quaternionToYaw(x, y, z, w)
+{
+  // yaw (z-axis rotation)
+  t1 = 2.0 * (w * z + x * y);
+  t2 = 1.0 - 2.0 * (y * y + z * z);
+  yaw = Math.atan2(t1, t2);
+
+  return yaw
+}</global>
+   <equation>return quaternionToYaw(x, y, z, w);</equation>
+  </snippet>
+ </snippets>
+ <!-- - - - - - - - - - - - - - - -->
+</root>
+
