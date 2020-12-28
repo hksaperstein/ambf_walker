@@ -123,6 +123,7 @@ self.rbdl_model = self.dynamic_model()
         """
         rate = rospy.Rate(1000)  # 1000hz
         q_msg = Float32MultiArray()
+        # tau = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         while 1:
             self.q = self.handle.get_all_joint_pos()
             self.qd = self.handle.get_all_joint_vel()
@@ -136,7 +137,9 @@ self.rbdl_model = self.dynamic_model()
                 for joint in self._selected_joint_names:
                     if joint in self._joints_names:
                         joints_idx.append(self._joints_names.index(joint))
-                # self.handle.set_multiple_joint_effort(self.tau, joints_idx)
+                # tau[2] = self.tau[2]
+                # tau[5] = self.tau[5]
+                self.handle.set_multiple_joint_effort(self.tau, joints_idx)
             rate.sleep()
 
     @abc.abstractmethod
