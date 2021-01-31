@@ -28,6 +28,13 @@ class Exoskeleton(Model.Model):
     def __init__(self, client, model_name, joints, mass, height):
         super(Exoskeleton, self).__init__(client, model_name=model_name, joint_names=joints)
         self._handle = self._client.get_obj_handle('ExoHip')
+        self.left_foot = self._client.get_obj_handle('ExoLeftFoot')
+        self.right_foot = self._client.get_obj_handle('ExoRightFoot')
+        # self.left_foot.set_pos(0.24, -0.55, -0.24)
+        # self.left_foot.set_rpy(0.0, 0.0, 0.0)
+        # self.right_foot.set_pos(-0.24, -0.55, -0.24)
+        # self.right_foot.set_rpy(0.0, 0.0, 0.0)
+
         # Update to current
         self.prox = {}
         self.prox["LeftSideProx"] = rospy.Publisher('left_leg', PointCloud, queue_size=10)
@@ -361,6 +368,25 @@ class Exoskeleton(Model.Model):
         hip = Model.get_traj(0.0, 0.3234, 0.0, 0.0, tf, dt)
         knee = Model.get_traj(0.0, 0.815, 0.0, 0., tf, dt)
         ankle = Model.get_traj(-0.349, 0.07, 0.0, 0.0, tf, dt)
+        return hip, knee, ankle
+
+    def standing_to_sitting_trajectory(self, ip, tf=2, dt=0.01):
+        # exo_hip = self.handle.get_pos()
+        # exo_hip_x = Model.get_traj(exo_hip.x, exo_hip.x, 0.0, 0.0, tf, dt)
+        # exo_hip_y = Model.get_traj(exo_hip.y, exo_hip.y + .5, 0.0, 0.0, tf, dt)
+        # exo_hip_z = Model.get_traj(exo_hip.z, exo_hip.z - .25, 0.0, 0.0, tf, dt)
+        hip = Model.get_traj(-0.5, -1.35, 0.0, 0.0, tf, dt)
+        knee = Model.get_traj(0.5, 1.54, 0.0, 0., tf, dt)
+        ankle = Model.get_traj(-0.2, -0.04, 0.0, 0.0, tf, dt)
+        return  hip, knee, ankle #, exo_hip_x, exo_hip_y, exo_hip_z,
+
+    def sitting_to_standing_trajectory(self, ip, tf=2, dt=0.01):
+        # -0.66
+        #.77
+        #-0.32
+        hip = Model.get_traj(-1.35, -0.5, 0.0, 0.0, tf, dt)
+        knee = Model.get_traj(1.54, 0.5, 0.0, 0.0, tf, dt)
+        ankle = Model.get_traj(-0.04, -0.2, 0.0, 0.0, tf, dt)
         return hip, knee, ankle
 
     def get_runner(self):

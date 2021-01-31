@@ -26,7 +26,7 @@ class Human(Model.Model):
         self._mass = mass
         self._height = height
 
-        self.handle = self._client.get_obj_handle('Hip')
+        self.handle = self._client.get_obj_handle('HumanTorso')
         self.rbdl_model = self.dynamic_model()
         # num_of_segments should be initialized with the dynamical model, which is created in the constructor
         self.num_joints = len(self.handle.get_joint_names())

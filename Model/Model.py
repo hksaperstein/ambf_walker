@@ -71,6 +71,10 @@ self.rbdl_model = self.dynamic_model()
         self._enable_control = value
 
     @property
+    def client(self):
+        return self._client
+
+    @property
     def handle(self):
         return self._handle
 

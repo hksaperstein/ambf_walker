@@ -16,14 +16,16 @@ class ExoStateMachine(object):
                                     transitions={'Initializing': 'Initialize',
                                                   'Initialized': 'Main'})
 
-            smach.StateMachine.add('Main', Main(model, ["Poly", "DMP", "Lower", "walk", "LQR", "walkinit", "stairDMP" ] ),
+            smach.StateMachine.add('Main', Main(model, ["Poly", "DMP", "LowerBody", "walk", "LQR", "walkinit", "stairDMP", "Stand2Sit", "Sit2Stand"]),
                                    transitions={'Poly': 'Listening',
                                                 'DMP': 'DMP',
                                                 "LQR": "LQR",
-                                                'Lower':'LowerBody',
+                                                'LowerBody':'LowerBody',
                                                 "stairDMP": "stairDMP",
                                                 "walk": "walk",
-                                                "walkinit": "WalkInit"})
+                                                "walkinit": "WalkInit",
+                                                "Stand2Sit": "Stand2Sit",
+                                                "Sit2Stand": "Sit2Stand"})
 
             smach.StateMachine.add('LowerBody', LowerBody(model),
                                    transitions={'Lowering': 'LowerBody',
@@ -63,6 +65,16 @@ class ExoStateMachine(object):
             smach.StateMachine.add('walk', Walk(model),
                                    transitions={'walking': 'walk',
                                                 'walked': 'Main'},
+                                   remapping={'q': 'q'})
+
+            smach.StateMachine.add('Stand2Sit', Stand2Sit(model),
+                                   transitions={'sitting': 'Stand2Sit',
+                                                'sat': 'Sit2Stand'},
+                                   remapping={'q': 'q'})
+
+            smach.StateMachine.add('Sit2Stand', Sit2Stand(model),
+                                   transitions={'standing': 'Sit2Stand',
+                                                'stood': 'Stand2Sit'},
                                    remapping={'q': 'q'})
 
         outcome = sm.execute()
