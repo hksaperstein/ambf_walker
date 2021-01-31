@@ -27,8 +27,8 @@ class Initialize(smach.State):
 
         self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
         self._model = model
-        self.rate = rospy.Rate(100)
-        tf = 2.0
+        self.rate = rospy.Rate(1000)
+        tf = 6.0
         dt = 0.01
         self.hip, self.knee, self.ankle = self._model.stance_trajectory(tf=tf, dt=dt)
         self.msg = DesiredJoints()
@@ -39,33 +39,33 @@ class Initialize(smach.State):
 
     def execute(self, userdata):
 
-        self._model.handle.set_rpy(0.0, 0, 0)
-        self._model.handle.set_pos(0.0, 0, 1.0)
+        self._model.handle.set_rpy(0.25, 0, 0)
+        self._model.handle.set_pos(0.0, -0.5, 1.0)
 
         if self.count <= self.total - 1:
 
-            q = np.array([self.hip["q"][self.count].item(), self.knee["q"][self.count].item(),
-                          self.ankle["q"][self.count].item(),
-                          self.hip["q"][self.count].item(), self.knee["q"][self.count].item(),
-                          self.ankle["q"][self.count].item(), 0.0])
-
-            qd = np.array([self.hip["qd"][self.count].item(), self.knee["qd"][self.count].item(),
-                           self.ankle["qd"][self.count].item(),
-                           self.hip["qd"][self.count].item(), self.knee["qd"][self.count].item(),
-                           self.ankle["qd"][self.count].item(), 0.0])
-
-            qdd = np.array([self.hip["qdd"][self.count].item(), self.knee["qdd"][self.count].item(),
-                            self.ankle["qdd"][self.count].item(),
-                            self.hip["qdd"][self.count].item(), self.knee["qdd"][self.count].item(),
-                            self.ankle["qdd"][self.count].item(), 0.0])
+            # q = np.array([self.hip["q"][self.count].item(), self.knee["q"][self.count].item(),
+            #               self.ankle["q"][self.count].item(),
+            #               self.hip["q"][self.count].item(), self.knee["q"][self.count].item(),
+            #               self.ankle["q"][self.count].item(), 0.0])
+            #
+            # qd = np.array([self.hip["qd"][self.count].item(), self.knee["qd"][self.count].item(),
+            #                self.ankle["qd"][self.count].item(),
+            #                self.hip["qd"][self.count].item(), self.knee["qd"][self.count].item(),
+            #                self.ankle["qd"][self.count].item(), 0.0])
+            #
+            # qdd = np.array([self.hip["qdd"][self.count].item(), self.knee["qdd"][self.count].item(),
+            #                 self.ankle["qdd"][self.count].item(),
+            #                 self.hip["qdd"][self.count].item(), self.knee["qdd"][self.count].item(),
+            #                 self.ankle["qdd"][self.count].item(), 0.0])
 
             self.count += 1
-            self.msg.q = q
-            self.msg.qd = qd
-            self.msg.qdd = qdd
-            self.msg.controller = "Dyn"
-            self.pub.publish(self.msg)
-            #self.send(q, qd, qdd, "Dyn", [])
+            # self.msg.q = q
+            # self.msg.qd = qd
+            # self.msg.qdd = qdd
+            # self.msg.controller = "Dyn"
+            # self.pub.publish(self.msg)
+            # self.send(q, qd, qdd, "Dyn", [])
             self.rate.sleep()
 
             return 'Initializing'
@@ -202,11 +202,6 @@ class DMP(smach.State):
             self.count = 0
             return "stepped"
 
-
-
-
-
-
 class Walk(smach.State):
 
     def __init__(self, model,outcomes=["walking", "walked"]):
@@ -215,7 +210,7 @@ class Walk(smach.State):
         self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
         self._model = model
         self.runner = self._model.get_walker()
-        self.rate = rospy.Rate(10)
+        self.rate = rospy.Rate(1000)
         self.set_msg = DesiredJoints()
         self.error_msg = DesiredJoints()
         self.set_pub = rospy.Publisher(self._model.model_name + "_set_points", DesiredJoints, queue_size=1)
@@ -378,7 +373,7 @@ class LowerBody(smach.State):
         self._model = model
         self.rate = rospy.Rate(1)
         self.step = 0.00000000001
-        self.final_height = -0.38
+        self.final_height = -0.75
 
     def execute(self, userdata):
 
@@ -386,12 +381,12 @@ class LowerBody(smach.State):
         current = self._model.handle.get_pos().z
 
         if current > self.final_height:
-            self._model.handle.set_pos(1.0, 0.9, current-self.step)
+            self._model.handle.set_pos(0, 0.0, current-self.step)
             self._model.handle.set_rpy(0.25, 0, 0)
             return 'Lowering'
         else:
             #self._model.handle.set_rpy(0.25, 0, 0)
-            #self._model.handle.set_force(0.0, 0.0, 0.0)
+            self._model.handle.set_force(0.0, 0.0, 0.0)
             return "Lowered"
 
 
@@ -596,3 +591,210 @@ class StairDMP(smach.State):
             plt.show()
             return "staired"
 
+
+class Stand2Sit(smach.State):
+
+    def __init__(self, model, outcomes=["sitting", "sat"]):
+        smach.State.__init__(self, outcomes=outcomes)
+        rospy.wait_for_service('joint_cmd')
+        self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
+        self._model = model
+
+        self.rate = rospy.Rate(10)
+        self.tf = 2.0
+        self.dt = 0.01
+        # ip = self._model.q[3:6]
+        # self.hip, self.knee, self.ankle = self._model.standing_to_sitting_trajectory(ip)
+        # print(self.hip)
+        # print(self.knee)
+        # print(self.ankle)
+
+        self.total = self.tf / self.dt
+
+        self.set_msg = DesiredJoints()
+        self.error_msg = DesiredJoints()
+        self.set_pub = rospy.Publisher(self._model.model_name + "_set_points", DesiredJoints, queue_size=1)
+        self.error_pub = rospy.Publisher(self._model.model_name + "_error", DesiredJoints, queue_size=1)
+        self.state_pub = rospy.Publisher("state", String, queue_size=1)
+        # self.restart_sub = rospy.Subscriber("restart", String, self.restart_cb)
+        self.start = ""
+        self.count = 0
+        self.num_cycles = 0
+        self.execute_start = True
+        self.last_x = []
+
+    # def restart_cb(self, msg):
+    #     self.num_cycles = 0
+
+    def execute(self, userdata):
+        # self._model.handle._pose_cmd_set = False
+        # self.left_foot.set_pos(0.24, -0.55, -0.24)
+        # self.right_foot.set_pos(-0.24, -0.55, -0.24)
+        # self._model.handle.set_rpy(1.5, 0, 0)
+
+        if self.count == 0:
+            self._model.handle.set_rpy(1.75, 0, 0)
+
+            self._model.handle.set_force(0.0, 0.0, 0.0)
+            rospy.sleep(10)
+            ip = self._model.q[3:6]
+            self.hip, self.knee, self.ankle = self._model.standing_to_sitting_trajectory(ip, tf=self.tf, dt=self.dt)
+
+        # print(self.runner.get_length())
+        if self.count < self.total:
+            # self._model.handle.set_pos(self.ehx["q"][self.count].item(), self.ehy["q"][self.count].item(), self.ehz["q"][self.count].item())
+
+
+            q = np.array([self.hip["q"][self.count].item(), self.knee["q"][self.count].item(),
+                          self.ankle["q"][self.count].item(),
+                          self.hip["q"][self.count].item(), self.knee["q"][self.count].item(),
+                          self.ankle["q"][self.count].item(), 0.0])
+
+            qd = np.array([self.hip["qd"][self.count].item(), self.knee["qd"][self.count].item(),
+                           self.ankle["qd"][self.count].item(),
+                           self.hip["qd"][self.count].item(), self.knee["qd"][self.count].item(),
+                           self.ankle["qd"][self.count].item(), 0.0])
+
+            qdd = np.array([self.hip["qdd"][self.count].item(), self.knee["qdd"][self.count].item(),
+                            self.ankle["qdd"][self.count].item(),
+                            self.hip["qdd"][self.count].item(), self.knee["qdd"][self.count].item(),
+                            self.ankle["qdd"][self.count].item(), 0.0])
+
+            # self._model.handle.set_multiple_joint_pos(q, [3, 1, 2, 6, 4, 5, 0])
+
+            self.set_msg.q = q
+            self.set_msg.qd = qd
+            self.set_msg.qdd = qdd
+            self.set_msg.controller = "Dyn"
+            self.set_pub.publish(self.set_msg)
+            self.error_msg.q = q - self._model.q
+            self.error_msg.qd = qd - self._model.qd
+            self.error_msg.qdd = qdd
+            self.error_msg.controller = "Dyn"
+            self.error_pub.publish(self.error_msg)
+            self.send(q, qd, qdd, "Dyn", [])
+            self.count += 1
+            # print(count)
+            self.rate.sleep()
+            self.last_x = q
+            self.state_pub.publish("sitting")
+            return "sitting"
+        else:
+            self.count = 0
+
+            # if self.num_cycles == 3:
+            #     self.state_pub.publish("sat")
+            #     self.num_cycles = 0
+            # else:
+            #     self.num_cycles += 1
+            # self.runner.reset()
+            # can torques be released?
+            # if self.num_cycles == 5:
+            #     self.state_pub.publish("walked")
+            return "sat"
+
+
+class Sit2Stand(smach.State):
+
+    def __init__(self, model, outcomes=["standing", "stood"]):
+        smach.State.__init__(self, outcomes=outcomes)
+        rospy.wait_for_service('joint_cmd')
+        self.send = rospy.ServiceProxy('joint_cmd', DesiredJointsCmd)
+        self._model = model
+        self.rate = rospy.Rate(10)
+        self.tf = 2.0
+        self.dt = 0.01
+        # ip = self._model.q[3:6]
+        # self.hip, self.knee, self.ankle = self._model.standing_to_sitting_trajectory(ip)
+        # print(self.hip)
+        # print(self.knee)
+        # print(self.ankle)
+
+        self.total = self.tf / self.dt
+
+        self.set_msg = DesiredJoints()
+        self.error_msg = DesiredJoints()
+        self.set_pub = rospy.Publisher(self._model.model_name + "_set_points", DesiredJoints, queue_size=1)
+        self.error_pub = rospy.Publisher(self._model.model_name + "_error", DesiredJoints, queue_size=1)
+        self.state_pub = rospy.Publisher("state", String, queue_size=1)
+        # self.restart_sub = rospy.Subscriber("restart", String, self.restart_cb)
+        self.start = ""
+        self.count = 0
+        self.num_cycles = 0
+        self.execute_start = True
+        self.last_x = []
+        self.ip = []
+
+    # def restart_cb(self, msg):
+    #     self.num_cycles = 0
+
+    def execute(self, userdata):
+        # self._model.handle._pose_cmd_set = False
+        # self.left_foot.set_pos(0.24, -0.55, -0.24)
+        # self.right_foot.set_pos(-0.24, -0.55, -0.24)
+        # self._model.handle.set_rpy(0, 0, 0)
+
+        if self.count == 0:
+            self._model.handle.set_rpy(1.75, 0, 0)
+            # rospy.sleep(2)
+            self._model.handle.set_force(0.0, 0.0, 0.0)
+            rospy.sleep(10)
+            # self._model.handle.set_rpy(1.75, 0, 0)
+            # print(self._model.handle.get_pos_command())
+            self.ip = self._model.q[3:6]
+            self.hip, self.knee, self.ankle = self._model.sitting_to_standing_trajectory(self.ip, tf=self.tf)
+            self._model.handle._pose_cmd_set = False
+
+        if self.count < self.total:
+            self.state_pub.publish("standing")
+            # self._model.handle.set_pos(self.ehx["q"][self.count].item(), self.ehy["q"][self.count].item(), self.ehz["q"][self.count].item())
+            # if self.num_cycles == 3:
+            #     self.state_pub.publish("sitting")
+
+            q = np.array([self.hip["q"][self.count].item(), self.knee["q"][self.count].item(),
+                          self.ankle["q"][self.count].item(),
+                          self.hip["q"][self.count].item(), self.knee["q"][self.count].item(),
+                          self.ankle["q"][self.count].item(), 0.0])
+
+            qd = np.array([self.hip["qd"][self.count].item(), self.knee["qd"][self.count].item(),
+                           self.ankle["qd"][self.count].item(),
+                           self.hip["qd"][self.count].item(), self.knee["qd"][self.count].item(),
+                           self.ankle["qd"][self.count].item(), 0.0])
+
+            qdd = np.array([self.hip["qdd"][self.count].item(), self.knee["qdd"][self.count].item(),
+                            self.ankle["qdd"][self.count].item(),
+                            self.hip["qdd"][self.count].item(), self.knee["qdd"][self.count].item(),
+                            self.ankle["qdd"][self.count].item(), 0.0])
+
+            # self._model.handle.set_multiple_joint_pos(q, [3, 1, 2, 6, 4, 5, 0])
+
+            self.set_msg.q = q
+            self.set_msg.qd = qd
+            self.set_msg.qdd = qdd
+            self.set_msg.controller = "Dyn"
+            self.set_pub.publish(self.set_msg)
+            self.error_msg.q = q - self._model.q
+            self.error_msg.qd = qd - self._model.qd
+            self.error_msg.qdd = qdd
+            self.error_msg.controller = "Dyn"
+            self.error_pub.publish(self.error_msg)
+            # self.send(q, qd, qdd, "Dyn", [])
+            self.count += 1
+            # print(count)
+            self.rate.sleep()
+            self.last_x = q
+            # self.state_pub.publish("standing")
+            return "standing"
+        else:
+            self.count = 0
+
+            # if self.num_cycles == 3:
+            #     self.state_pub.publish("sat")
+            #     self.num_cycles = 0
+            # else:
+            #     self.num_cycles += 1
+            # self.runner.reset()
+            # can torques be released?
+            # if self.num_cycles == 5:
+            self.state_pub.publish("stood")
+            return "stood"
